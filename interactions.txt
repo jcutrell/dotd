@@ -1,0 +1,33 @@
+=================
+Interaction Guide
+=================
+
+CIRCLE:
+	Trigger:
+		hand crossing midsection twice (x axis).
+	Guide:
+		"Draw a wide salt circle around yourself."
+
+TAKE OR PICK UP SALT:
+	Reach left or right hand toward the camera (+z) , then pull back (-z)
+
+LOOK LEFT OR RIGHT:
+	Move head left or right (+/- x)
+
+LOOK UP OR DOWN:
+	Move head up or down (+/- y)
+
+STEP OUT OF SALT CIRCLE:
+	Move entire body in a certain distance from the central position (+/- x or +/- z)
+	perhaps best measured by watching the user’s feet
+
+OPEN DOOR:
+	Move left or right hand toward the camera (+z) , then pull back (-z)
+	Same as picking up salt(?)
+
+DODGE THROWN OBJECT:
+	Track position of head, which can be moved left, right or down (+/ x or +/- y)
+
+OPEN TRUNK:
+	Move left or right hand down (-y), then back up (+y)
+	This will also work for both hands (or do we want it only to work with both hands?)
