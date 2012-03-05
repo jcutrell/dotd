@@ -1,12 +1,13 @@
 
-function WebSocketConnect(connectDivId){
+function WebSocketConnect(connectDivId, externalKinectListener){
 	
 	var connectDiv;
 	
 	var server_ipAddress;
 	var server_port;
 	var socket;
-		
+	
+	var kinectListener = externalKinectListener;
 
 
 	this.initializeWebSocketConnect = function(ipAddress, port)
@@ -50,7 +51,7 @@ function WebSocketConnect(connectDivId){
 		switch(decoded.command)
 		{
 			case "SKELETON_UPDATE":
-				myKinectListener.animate(decoded.data);
+				kinectListener.animate(decoded.data);
 				break;
 		}
 	}

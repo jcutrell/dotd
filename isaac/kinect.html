@@ -20,7 +20,7 @@
 	function initializeInterface(){
 		outputDiv = document.getElementById("outputDiv");	
 		myKinectListener = new KinectListener("skeletonBox");
-		myWebSocketConnect = new WebSocketConnect("connectDiv");	
+		myWebSocketConnect = new WebSocketConnect("connectDiv", myKinectListener);	
 	}
 
 
