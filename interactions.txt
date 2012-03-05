@@ -1,4 +1,4 @@
-=================
+﻿=================
 Interaction Guide
 =================
 
@@ -30,4 +30,6 @@ DODGE THROWN OBJECT:
 
 OPEN TRUNK:
 	Move left or right hand down (-y), then back up (+y)
+
+Hello from Isaac
 	This will also work for both hands (or do we want it only to work with both hands?)
