@@ -46,11 +46,11 @@ div.submit
 
 #container
 {
-	margin: 10px;
+	/*margin: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	width: 640px;
-	height: 480px;
+	height: 480px;*/
 }
 
 #connect
@@ -99,7 +99,7 @@ div.submit
 
 #skeletonBox{
 	position:absolute;
-	left:50%;
+	left:600px;
 	top:50%;
 	width:200px;
 	height:200px;
@@ -172,5 +172,38 @@ div.bodyClass{
 	top: 300px;
 	width:100%;
 	font-size:32px;
+}
+
+#mainbg {
+    background-image: url('http://4.bp.blogspot.com/-eJ_9QXvwPOo/TqywbgMFGpI/AAAAAAAABZ4/5W8kNb1QTnI/s1600/1+-+Sam+saves+Lenore+-+s2.jpg');
+    width: 800px;
+    height: 500px;
+    background-size: 100%;
+    position: absolute;
+    top: 100px;
+    left: 0px;
+    z-index: 200;
+}
+
+#lefthandblack, #righthandblack {
+    z-index: 300;
+    position: absolute;
+    width: 800px;
+    height: 500px;
+    top: 100px;
+    left: 0px;
+    background-color: rgba(0,0,0,0.05);
+    -webkit-mask-image: -webkit-radial-gradient(center, 100px 100px, rgba(255,255,255,0) 57%, rgba(10,8,9,1) 74%); /* Chrome10+,Safari5.1+ */
+}
+
+#lefthandwhite, #righthandwhite {
+    z-index: 400;
+    width: 800px;
+    height: 500px;
+    top: 100px;
+    left: 0px;
+    position: absolute;
+    background-color: rgba(255,255,255,0.3);
+    -webkit-mask-image: -webkit-radial-gradient(center, 100px 100px, rgba(0,0,0,1) 0%,rgba(0,0,0,0.2) 60%,rgba(0,0,0,0.4) 90%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
 }
 
