@@ -85,12 +85,12 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		}
 		
 		this.pointsAreDistant = function(){
-			distance1 = 0;
-			distance2 = 0;
-			distance3 = 0;
-			distance4 = 0;
-			distance5 = 0;
-			distance6 = 0;
+			var distance1 = 0,
+				distance2 = 0,
+				distance3 = 0,
+				distance4 = 0,
+				distance5 = 0,
+				distance6 = 0;
 			
 			if(this.detections.up && this.detections.down){ // potential circle detected around z-axis
 				distance1 = this.calculatePointDistance(this.points["left"], this.points["right"]);
