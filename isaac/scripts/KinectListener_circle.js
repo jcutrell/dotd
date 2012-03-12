@@ -135,7 +135,7 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 	this.rightCircleListener;
 	
 	function outputStuff(){		
-		outputString = "LEFT<br/>";
+		var outputString = "LEFT<br/>";
 		if(this.leftCircleListener.detections.left){outputString += "left: " + this.leftCircleListener.detections.left + "<br/>";}
 		else{outputString += "left: absent<br/>"}
 		if(this.leftCircleListener.detections.right){outputString += "right: " + this.leftCircleListener.detections.right + "<br/>";}
@@ -169,11 +169,11 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		HEIGHT = 480,	
 		PI2 = Math.PI * 2,
 		program = function ( context ) {
-		context.beginPath();
-		context.arc( 0, 0, 1, 0, PI2, true );
-		context.closePath();
-		context.fill();
-	};
+			context.beginPath();
+			context.arc( 0, 0, 1, 0, PI2, true );
+			context.closePath();
+			context.fill();
+		};
 	
 	
 	
