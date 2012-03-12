@@ -1,16 +1,14 @@
 
 function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skeletonBoxId, connectDivId){
 	
-	var jointIndexByName= {pelvis:0, waist:1, neck:2, head:3, left_shoulder:4, left_elbow:5, left_wrist:6, left_hand:7, right_shoulder:8, right_elbow:9, right_wrist:10, right_hand:11, left_hip:12, left_knee:13, left_ankle:14, left_foot:15, right_hip:16, right_knee:17, right_ankle:18, right_foot:19};
-	var interface;
-	
-	var leftHandDiv;
-	var rightHandDiv;
-	var skeletonBoxDiv;
-	var connectDiv;
-	
-	var showHandPositions = true;
-	var showBody = true;
+	var jointIndexByName= {pelvis:0, waist:1, neck:2, head:3, left_shoulder:4, left_elbow:5, left_wrist:6, left_hand:7, right_shoulder:8, right_elbow:9, right_wrist:10, right_hand:11, left_hip:12, left_knee:13, left_ankle:14, left_foot:15, right_hip:16, right_knee:17, right_ankle:18, right_foot:19},
+		interface,
+		leftHandDiv,
+		rightHandDiv,
+		skeletonBoxDiv,
+		connectDiv,
+		showHandPositions = true,
+		showBody = true;
 
 	
 	function CircleListener(title){
@@ -160,21 +158,17 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		output(outputString);
 	}
 	
-	var socket;
-	
-	var stats;
-	var camera, scene, renderer, group, particle;
-	var mouseX = 0, mouseY = 0;
-	
-	var skeletons = [];
-	var skeletonGroups = {};
-	var skeletonTrackingIDs = [];
-	
-	var WIDTH = 640;
-	var HEIGHT = 480;
-	
-	var PI2 = Math.PI * 2;
-	var program = function ( context ) {
+	var socket,
+		stats,
+		camera, scene, renderer, group, particle,
+		mouseX = 0, mouseY = 0,
+		skeletons = [],
+		skeletonGroups = {},
+		skeletonTrackingIDs = [],
+		WIDTH = 640,
+		HEIGHT = 480,	
+		PI2 = Math.PI * 2,
+		program = function ( context ) {
 		context.beginPath();
 		context.arc( 0, 0, 1, 0, PI2, true );
 		context.closePath();
@@ -209,11 +203,9 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		}
 	}
 	
-	var previousSkeleton = new SkeletonObject();
-	
-	
-	var divArray = new Array(20);
-	var userVisibleToKinect = false;
+	var previousSkeleton = new SkeletonObject(),
+		divArray = new Array(20),
+		userVisibleToKinect = false;
 
 	initialize();
 	
