@@ -1,16 +1,14 @@
 
 function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skeletonBoxId, connectDivId){
 	
-	var jointIndexByName= {pelvis:0, waist:1, neck:2, head:3, left_shoulder:4, left_elbow:5, left_wrist:6, left_hand:7, right_shoulder:8, right_elbow:9, right_wrist:10, right_hand:11, left_hip:12, left_knee:13, left_ankle:14, left_foot:15, right_hip:16, right_knee:17, right_ankle:18, right_foot:19};
-	var interface;
-	
-	var leftHandDiv;
-	var rightHandDiv;
-	var skeletonBoxDiv;
-	var connectDiv;
-	
-	var showHandPositions = true;
-	var showBody = true;
+	var jointIndexByName= {pelvis:0, waist:1, neck:2, head:3, left_shoulder:4, left_elbow:5, left_wrist:6, left_hand:7, right_shoulder:8, right_elbow:9, right_wrist:10, right_hand:11, left_hip:12, left_knee:13, left_ankle:14, left_foot:15, right_hip:16, right_knee:17, right_ankle:18, right_foot:19},
+		interface,
+		leftHandDiv,
+		rightHandDiv,
+		skeletonBoxDiv,
+		connectDiv,
+		showHandPositions = true,
+		showBody = true;
 
 	
 	function CircleListener(title){
@@ -87,12 +85,12 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		}
 		
 		this.pointsAreDistant = function(){
-			distance1 = 0;
-			distance2 = 0;
-			distance3 = 0;
-			distance4 = 0;
-			distance5 = 0;
-			distance6 = 0;
+			var distance1 = 0,
+				distance2 = 0,
+				distance3 = 0,
+				distance4 = 0,
+				distance5 = 0,
+				distance6 = 0;
 			
 			if(this.detections.up && this.detections.down){ // potential circle detected around z-axis
 				distance1 = this.calculatePointDistance(this.points["left"], this.points["right"]);
@@ -137,7 +135,7 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 	this.rightCircleListener;
 	
 	function outputStuff(){		
-		outputString = "LEFT<br/>";
+		var outputString = "LEFT<br/>";
 		if(this.leftCircleListener.detections.left){outputString += "left: " + this.leftCircleListener.detections.left + "<br/>";}
 		else{outputString += "left: absent<br/>"}
 		if(this.leftCircleListener.detections.right){outputString += "right: " + this.leftCircleListener.detections.right + "<br/>";}
@@ -160,26 +158,22 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		output(outputString);
 	}
 	
-	var socket;
-	
-	var stats;
-	var camera, scene, renderer, group, particle;
-	var mouseX = 0, mouseY = 0;
-	
-	var skeletons = [];
-	var skeletonGroups = {};
-	var skeletonTrackingIDs = [];
-	
-	var WIDTH = 640;
-	var HEIGHT = 480;
-	
-	var PI2 = Math.PI * 2;
-	var program = function ( context ) {
-		context.beginPath();
-		context.arc( 0, 0, 1, 0, PI2, true );
-		context.closePath();
-		context.fill();
-	};
+	var socket,
+		stats,
+		camera, scene, renderer, group, particle,
+		mouseX = 0, mouseY = 0,
+		skeletons = [],
+		skeletonGroups = {},
+		skeletonTrackingIDs = [],
+		WIDTH = 640,
+		HEIGHT = 480,	
+		PI2 = Math.PI * 2,
+		program = function ( context ) {
+			context.beginPath();
+			context.arc( 0, 0, 1, 0, PI2, true );
+			context.closePath();
+			context.fill();
+		};
 	
 	
 	
@@ -209,11 +203,9 @@ function KinectListener(interfaceIdentifier, leftHandDivId, rightHandDivId, skel
 		}
 	}
 	
-	var previousSkeleton = new SkeletonObject();
-	
-	
-	var divArray = new Array(20);
-	var userVisibleToKinect = false;
+	var previousSkeleton = new SkeletonObject(),
+		divArray = new Array(20),
+		userVisibleToKinect = false;
 
 	initialize();
 	

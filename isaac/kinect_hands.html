@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -5,20 +6,22 @@
 <title>Lag Test</title>
 
 <link rel="stylesheet" type="text/css" href="styles/styles.css" />
-
 <script type="text/javascript" src="./scripts/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="./scripts/KinectListener_circle.js"></script>
+<script type="text/javascript" src="./scripts/WebSocketConnection.js"></script>
+<script type="text/javascript" src="./scripts/KinectListener_hands.js"></script>
 
 
 <script>
 	
 	var myKinectListener;
+	var myWebSocketConnect;
 	var self = this;
 	var outputDiv;
 	
 	function initializeInterface(){
-		outputDiv = document.getElementById("outputDiv");
-		myKinectListener = new KinectListener(self, "leftHandDiv", "rightHandDiv", "skeletonBox", "connectDiv");		
+		outputDiv = document.getElementById("outputDiv");	
+		myKinectListener = new KinectListener("skeletonBox");
+		myWebSocketConnect = new WebSocketConnect("connectDiv", myKinectListener);	
 	}
 
 
@@ -28,6 +31,12 @@
 	
 	function aoppendOutput(txt){
 		outputDiv.innerHTML += txt;	
+	}
+	
+	function openWebSocket(){
+		ipAddress = document.getElementById("ipAddressText").value;
+		port = document.getElementById("portText").value;
+		myWebSocketConnect.initializeWebSocketConnect(ipAddress, port);
 	}
 </script>
 
@@ -39,33 +48,29 @@
         <!-- KinectListener -->
         <div id="container">
             <div id="connectDiv" >
-                <form method="post" action="">
                     <div class="text">
                         <label for="ip">IP:</label>
-                        <input type="text" id="ip" name="ip" value="127.0.0.1" class="text">
+                        <input type="text" id="ipAddressText" name="ip" value="127.0.0.1" class="text">
                     </div>
                     <div class="text">
                         <label for="port">Port:</label>
-                        <input type="text" id="port" name="port" value="1234" class="text">
+                        <input type="text" id="portText" name="port" value="1234" class="text">
                     </div>
                     <div class="submit">
-                        <input type="submit" value="connect" class="submit">
+                        <button onclick="openWebSocket();">Submit</button>
                     </div>
-                </form>
             </div>
     	</div>
         
-    		
-		<!--
-        <div id="controlsDiv">
-   			<input type="checkbox" onclick="myKinectListener.setShowBody(this.checked);" checked/> Show Body<br/>
-            <input type="checkbox" onclick="myKinectListener.setShowHandPositions(this.checked);" checked/> Show Hands<br/>
-        	<button id="playbackButton" onclick="myVideoPanObj.updatePlaybackState();">Play/Pause</button>
-        </div>
-        -->
-
 		<div id="skeletonBox"></div>
-		<div id="circleDiv"></div>
+		
+		<div id="wrap_hand_circles">
+			<div id="mainbg"></div>
+			<div id="lefthandblack"></div>
+			<div id="righthandblack"></div>
+			<div id="lefthandwhite"></div>
+			<div id="righthandwhite"></div>
+		</div>
         
         <div id="outputDiv" style="position:absolute; left:10px; top:10px; width:300px;"></div>
 </body>

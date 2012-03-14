@@ -11,6 +11,7 @@
 	overflow:hidden;
 }
 
+
 input.text
 {
 	width: 100px;
@@ -44,19 +45,58 @@ div.submit
 	padding-left: 50px;
 }
 
-#container
-{
-	/*margin: 10px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 640px;
-	height: 480px;*/
+
+#sceneContainer{
+	position:absolute;
+	left:50%;
+	top:50%;
+	width:1000px;
+	height:600px;
+	margin-left:-500px;
+	margin-top:-300px;
+	
+	background-color:#999999;
+	overflow:hidden;
 }
+
+#backgroundDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:1250px;
+	height:840px;
+	background-image:url('../images/background2.png');
+	background-size:100%;
+	background-repeat:no-repeat;
+}
+
+#scaryGirlDiv{
+	position:absolute;
+	left:300px;
+	top:300px;
+	width:560px;
+	height:540px;
+	background-image:url('../images/scaryGirl.png');
+}
+
 
 #connect
 {
-	margin-left: auto;
-	margin-right: auto;
+	position:absolute;
+	left:200px;
+	top:10px;
+	width:100px;
+	height:100px;
+	background-color:#FF0000;
+}
+
+#connectionPanel{
+	position:absolute;
+	left:10px;
+	top:10px;
+	width:200px;
+	height:100px;
+	background-color:#FFFFFF;
 }
 
 #connect
@@ -99,15 +139,17 @@ div.submit
 
 #skeletonBox{
 	position:absolute;
-	left:900px;
+	left:50%;
 	top:50%;
 	width:200px;
 	height:200px;
 	margin-left:-100px;
 	margin-top:-100px;
 	-webkit-transform-style:preserve-3d;
+	visibility:hidden;
 }
 
+/*
 #circleDiv{
 	position:absolute;
 	left:50%;
@@ -119,7 +161,43 @@ div.submit
 	background-image:url('../images/circle_cyan.png');
 	opacity:0;
 	-webkit-transition:opacity 0.5s ease;
+}*/
+
+
+#circleDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:1000px;
+	height:600px;
+	
+	opacity:0;
+	-webkit-transition:opacity 1s ease;
 }
+
+#circleGlow{
+	position:absolute;
+	left:0px;
+	top:0px;
+	
+	width:1000px;
+	height:600px;
+	background-image:url('../images/glow.png');
+	
+	-webkit-animation-name: fadePulse;
+	-webkit-animation-duration:1s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-timing-function:ease;
+	-webkit-animation-direction:alternate;
+}
+
+@-webkit-keyframes fadePulse {
+	from {opacity:0.0.75;}
+	to {opacity:1.00;}
+	from {opacity:1.0;}
+	to {opacity:0.75;}
+}
+
 
 div.bodyClass{
 	position:absolute;
@@ -172,54 +250,5 @@ div.bodyClass{
 	top: 300px;
 	width:100%;
 	font-size:32px;
-}
-
-#outputDivRight{
-	position:absolute;
-	right: 10px;
-	top: 300px;
-	width:100%;
-	font-size:32px;
-}
-
-#mainbg {
-    background-image: url('http://4.bp.blogspot.com/-eJ_9QXvwPOo/TqywbgMFGpI/AAAAAAAABZ4/5W8kNb1QTnI/s1600/1+-+Sam+saves+Lenore+-+s2.jpg');
-    width: 800px;
-    height: 500px;
-    background-size: 100%;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 200;
-}
-
-#wrap_hand_circles {
-	width: 800px;
-	height: 500px;
-	overflow: hidden;
-	position: relative;
-}
-#lefthandblack, #righthandblack {
-    z-index: 300;
-    position: absolute;
-    width: 1000px;
-    height: 700px;
-    margin-top: -100px;
-    margin-left: -100px;
-    left: 0px;
-    background-color: rgba(0,0,0,0.05);
-    -webkit-mask-image: -webkit-radial-gradient(center, 100px 100px, rgba(255,255,255,0) 57%, rgba(10,8,9,1) 74%); /* Chrome10+,Safari5.1+ */
-}
-
-#lefthandwhite, #righthandwhite {
-    z-index: 400;
-    width: 1000px;
-    height: 700px;
-    margin-top: -100px;
-    margin-left: -100px;
-    left: 0px;
-    position: absolute;
-    background-color: rgba(255,255,255,0.3);
-    -webkit-mask-image: -webkit-radial-gradient(center, 100px 100px, rgba(0,0,0,1) 0%,rgba(0,0,0,0.2) 60%,rgba(0,0,0,0.4) 90%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
 }
 
