@@ -174,3 +174,11 @@ div.bodyClass{
 	font-size:32px;
 }
 
+#outputDivRight{
+	position:absolute;
+	right: 10px;
+	top: 300px;
+	width:100%;
+	font-size:32px;
+}
+

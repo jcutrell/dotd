@@ -128,11 +128,32 @@ function KinectListener(skeletonBoxId){
 						
 
 						if(j==7){ //left hand						
-					
+							var handXLeft = Math.floor(xRatio*250) + 250;
+							var handYLeft = Math.floor(yRatio*-250) + 250;
+							
+							if(handXLeft >= 0 && handXLeft <= 150 && handYLeft >= 0 && handYLeft <= 115){
+								output("HIT<br/>X: " + handXLeft + "<br/>Y: " + handYLeft);
+							}
+							else{
+								output("No hit<br/>X: " + handXLeft + "<br/>Y: " + handYLeft);
+							}
+								
 						}
 						
 						if(j==11){ //right hand
-		
+						//	var handX = xRatio*500 + 250;
+						//	var handY = yRatio*-500 + 250;
+							
+							var handXRight = Math.floor(xRatio*250) + 250;
+							var handYRight = Math.floor(yRatio*-250) + 250;
+							
+							if(handXRight >= 0 && handXRight <= 150 && handYRight >= 0 && handYRight <= 115){
+								outputRight("HIT<br/>X: " + handXRight + "<br/>Y: " + handYRight);
+							}
+							else{
+								outputRight("No hit<br/>X: " + handXRight + "<br/>Y: " + handYRight);
+							}
+							
 						}
 								
 						if(j==3){ //head
