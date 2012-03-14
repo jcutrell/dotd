@@ -125,16 +125,20 @@ function KinectListener(skeletonBoxId){
 
 
 						if(j==7){ //left hand
+							var handX = xRatio*600;
+							var handY = yRatio*-600 - 500;
 							$("#lefthandwhite, #lefthandblack").css({
-						        "-webkit-mask-position-x" : Math.floor(xPixel),
-						        "-webkit-mask-position-y" : Math.floor(yPixel)
+						        "-webkit-mask-position-x" : Math.floor(handX),
+						        "-webkit-mask-position-y" : Math.floor(handY)
 						    });
 						}
 						
 						if(j==11){ //right hand
+							var handX = xRatio*500 - 250;
+							var handY = yRatio*-500 - 500;
 							$("#righthandwhite, #righthandblack").css({
-						        "-webkit-mask-position-x" : Math.floor(xPixel),
-						        "-webkit-mask-position-y" : Math.floor(yPixel)
+						        "-webkit-mask-position-x" : Math.floor(handX),
+						        "-webkit-mask-position-y" : Math.floor(handY)
 						    });
 						}
 								
