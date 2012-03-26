@@ -5,7 +5,9 @@
 <title>Kinect Head Tracking</title>
 
 <link rel="stylesheet" type="text/css" href="styles/styles_hitBoxes.css" />
+<link rel="stylesheet" type="text/css" href="styles/styles.css" />
 
+<script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="scripts/WebSocketConnection.js"></script>
 <script type="text/javascript" src="scripts/Point.js"></script>
 <script type="text/javascript" src="scripts/CircleListener.js"></script>
@@ -62,7 +64,14 @@
 	</div>
    
     <div id="skeletonBox"></div>
-    
+
+    <div id="wrap_hand_circles">
+		<div id="mainbg"></div>
+		<div id="lefthandblack"></div>
+		<div id="righthandblack"></div>
+		<div id="lefthandwhite"></div>
+		<div id="righthandwhite"></div>
+	</div>
     
     <div id="lostTrackingMaskDiv"></div>
 	<div id="lostTrackingAlertDiv">Please return to center</div>
