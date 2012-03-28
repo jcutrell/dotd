@@ -149,17 +149,17 @@ function KinectListener(skeletonBoxId){
 							var handZLeft = Math.floor(zRatio*-250) + 600;
 							
 							if(zHitLeft == 0){
-								if(handXLeft >= hitboxDim.xMin && handXLeft <= hitboxDim.xMax && handYLeft >= hitboxDim.yMin && handYLeft <= hitboxDim.yMax && handZLeft >= waistZ + 100){
-									output("HIT<br/>X: " + handXLeft + "<br/>Y: " + handYLeft);
+								if(handXLeft >= hitboxDim.xMin && handXLeft <= hitboxDim.xMax && handYLeft >= hitboxDim.yMin && handYLeft <= hitboxDim.yMax && handZLeft >= waistZ + 75){
+									output("HIT<br/>X: " + handXLeft + "<br/>Y: " + handYLeft + "<br/>Z: " + (handZLeft - waistZ));
 									zHitLeft = handZLeft;
 									output("Z at" + zHitLeft + "when hit");
 								}
 								else{
-									output("No hit<br/>X: " + handXLeft + "<br/>Y: " + handYLeft);
+									output("No hit<br/>X: " + handXLeft + "<br/>Y: " + handYLeft + "<br/>Z: " + (handZLeft - waistZ));
 								}
 							}
 							else{
-								if(handZLeft < zHitLeft - 50){
+								if(handZLeft < zHitLeft - 30){
 									output("THE DOOR IS OPEN!!!!!!!");
 								}
 							}
@@ -172,17 +172,17 @@ function KinectListener(skeletonBoxId){
 							var handZRight = Math.floor(zRatio*-250) + 600;
 							
 							if(zHitRight == 0){
-								if(handXRight >= hitboxDim.xMin && handXRight <= hitboxDim.xMax && handYRight >= hitboxDim.yMin && handYRight <= hitboxDim.yMax && handZRight >= waistZ + 100){
-									outputRight("HIT<br/>X: " + handXRight + "<br/>Y: " + handYRight);
+								if(handXRight >= hitboxDim.xMin && handXRight <= hitboxDim.xMax && handYRight >= hitboxDim.yMin && handYRight <= hitboxDim.yMax && handZRight >= waistZ + 75){
+									outputRight("HIT<br/>X: " + handXRight + "<br/>Y: " + handYRight + "<br/>Z: " + (handZRight - waistZ));
 									zHitRight = handZRight;
 									outputRight("Z at" + zHitRight + "when hit");
 								}
 								else{
-									outputRight("No hit<br/>X: " + handXRight + "<br/>Y: " + handYRight);
+									outputRight("No hit<br/>X: " + handXRight + "<br/>Y: " + handYRight + "<br/>Z: " + (handZRight - waistZ));
 								}
 							}
 							else{
-								if(handZRight < zHitRight - 50){
+								if(handZRight < zHitRight - 30){
 									outputRight("THE DOOR IS OPEN!!!!!!!");
 								}
 							}
