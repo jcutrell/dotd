@@ -11,13 +11,19 @@ function KinectListener(skeletonBoxId){
 	
 	var joinDivArray = new Array(20); //html div elements for each joint
 	var userIsVisibleToKinect = false; //true when user is standing infront of the kinect, false otherwise
-
+	
+	var zHitLeft = 0;
+	var zHitRight = 0;
+	
 	var hitboxDim = {
-		xMin: 0,
-		xMax: 150,
-		yMin: 0,
-		yMax: 150
+		xMin: 250,
+		xMax: 325,
+		yMin: 250,
+		yMax: 325,
+		zMin: 100,
+		zMax: 150
 	};
+
 
 	function Point(x,y,z){ //simple (x,y,z) point object
 		this.x = x;
@@ -131,6 +137,7 @@ function KinectListener(skeletonBoxId){
 						zPixel = zRatio*100 + 100;
 						
 						
+						
 						//origin is upper left
 						
 						node.style.webkitTransform = "translate3d(" + xPixel + "px, " + yPixel + "px, " + zPixel + "px)"; //move joint dots around to reflect kinect data
@@ -141,30 +148,44 @@ function KinectListener(skeletonBoxId){
 							var handYLeft = Math.floor(yRatio*-250) + 250;
 							var handZLeft = Math.floor(zRatio*-250) + 600;
 							
-							if(handXLeft >= hitboxDim.xMin && handXLeft <= hitboxDim.xMax && handYLeft >= hitboxDim.yMin && handYLeft <= hitboxDim.yMax && handZLeft >= waistZ + 75){
-								output("TOOK HAND<br/>X: " + handXLeft + "<br/>Y: " + handYLeft + "<br/>Z: " + (handZLeft - waistZ));
+							if(zHitLeft == 0){
+								if(handZLeft >= waistZ + 100){
+									output("HIT<br/>X: " + handXLeft + "<br/>Y: " + handYLeft);
+									zHitLeft = handZLeft;
+									output("Z at" + zHitLeft + "when hit");
+								}
+								else{
+									output("No hit<br/>X: " + handXLeft + "<br/>Y: " + handYLeft);
+								}
 							}
 							else{
-								output("Still in circle<br/>X: " + handXLeft + "<br/>Y: " + handYLeft + "<br/>Z: " + (handZLeft - waistZ));
+								if(handZLeft < zHitLeft - 50){
+									output("THE DOOR IS OPEN!!!!!!!");
+								}
 							}
 								
 						}
 						
 						if(j==11){ //right hand
-						//	var handX = xRatio*500 + 250;
-						//	var handY = yRatio*-500 + 250;
-							
 							var handXRight = Math.floor(xRatio*250) + 250;
 							var handYRight = Math.floor(yRatio*-250) + 250;
 							var handZRight = Math.floor(zRatio*-250) + 600;
 							
-							if(handXRight >= hitboxDim.xMin && handXRight <= hitboxDim.xMax && handYRight >= hitboxDim.yMin && handYRight <= hitboxDim.yMax && handZRight >= waistZ + 75){
-								outputRight("TOOK HAND<br/>X: " + handXRight + "<br/>Y: " + handYRight + "<br/>Z: " + (handZRight - waistZ));
+							if(zHitRight == 0){
+								if(handZRight >= waistZ + 100){
+									outputRight("HIT<br/>X: " + handXRight + "<br/>Y: " + handYRight);
+									zHitRight = handZRight;
+									outputRight("Z at" + zHitRight + "when hit");
+								}
+								else{
+									outputRight("No hit<br/>X: " + handXRight + "<br/>Y: " + handYRight);
+								}
 							}
 							else{
-								outputRight("Still in circle<br/>X: " + handXRight + "<br/>Y: " + handYRight + "<br/>Z: " + (handZRight - waistZ));
+								if(handZRight < zHitRight - 50){
+									outputRight("THE DOOR IS OPEN!!!!!!!");
+								}
 							}
-							
 						}
 								
 						if(j==3){ //head
