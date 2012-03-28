@@ -4,50 +4,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Kinect Head Tracking</title>
 
+<!--<link rel="stylesheet" type="text/css" href="styles/styles.css" />-->
 <link rel="stylesheet" type="text/css" href="styles/styles_hitBoxes.css" />
-<link rel="stylesheet" type="text/css" href="styles/styles.css" />
 
 <script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="scripts/WebSocketConnection.js"></script>
 <script type="text/javascript" src="scripts/Point.js"></script>
 <script type="text/javascript" src="scripts/CircleListener.js"></script>
-<script type="text/javascript" src="scripts/KinectListener_hitBoxes.js"></script>
-
-
-
-<script>
-	
-	var myKinectListener;
-	var myWebSocketConnect;
-	var self = this;
-	var outputDiv;
-	
-	var backgroundDiv;
-	
-	function initializeInterface(){
-		outputDiv = document.getElementById("outputDiv");	
-		backgroundDiv = document.getElementById("backgroundDiv");	
-		
-		myKinectListener = new KinectListener("skeletonBox");
-		myWebSocketConnect = new WebSocketConnect("connectionPanel", myKinectListener);	
-		openWebSocket();
-	}
-
-
-	function output(txt){
-		outputDiv.innerHTML = txt;	
-	}
-	
-	function aoppendOutput(txt){
-		outputDiv.innerHTML += txt;	
-	}
-	
-	function openWebSocket(){
-		ipAddress = document.getElementById("ipAddressText").value;
-		port = document.getElementById("portText").value;
-		myWebSocketConnect.initializeWebSocketConnect(ipAddress, port);
-	}
-</script>
 
 
 </head>
@@ -55,23 +18,28 @@
 <body onload="initializeInterface();">
 
 	<div id="sceneContainer">	
-    	<div id="backgroundDiv"></div> 
+    	<div id="backgroundDiv">
+        	<video id="mainVideo" src="clips/door_hand.mp4" width="1440" height="810"></video>
+        </div> 
         <div id="scaryGirlDiv"></div>  
         
         <div id="circleDiv">
             <div id="circleGlow"></div>
         </div>
-	</div>
-   
-    <div id="skeletonBox"></div>
-
-    <div id="wrap_hand_circles">
-		<div id="mainbg"></div>
-		<div id="lefthandblack"></div>
+        
+        <!--
+        <div id="lefthandblack"></div>
 		<div id="righthandblack"></div>
 		<div id="lefthandwhite"></div>
 		<div id="righthandwhite"></div>
-	</div>
+		-->
+        
+        <div id="leftHand"></div>
+        <div id="rightHand"></div>
+    </div>
+   
+    <div id="skeletonBox"></div>
+
     
     <div id="lostTrackingMaskDiv"></div>
 	<div id="lostTrackingAlertDiv">Please return to center</div>
@@ -86,6 +54,45 @@
     
     
     
-    <div id="outputDiv" style="position:absolute; left:10px; top:10px; width:300px;"></div>
+    <div id="outputDiv" style="position:absolute; left:10px; top:100px; width:300px;">sdfsdfds</div>
+
+
+
+	<script type="text/javascript" src="scripts/KinectListener_hitBoxes.js"></script>
+
+    <script>
+        
+        var myKinectListener;
+        var myWebSocketConnect;
+        var self = this;
+        var outputDiv;
+        
+        var backgroundDiv;
+        
+        function initializeInterface(){
+            outputDiv = document.getElementById("outputDiv");	
+            backgroundDiv = document.getElementById("backgroundDiv");	
+            
+            myKinectListener = new KinectListener("skeletonBox");
+            myWebSocketConnect = new WebSocketConnect("connectionPanel", myKinectListener);	
+            openWebSocket();
+        }
+    
+    
+        function output(txt){
+            outputDiv.innerHTML = txt;	
+        }
+        
+        function aoppendOutput(txt){
+            outputDiv.innerHTML += txt;	
+        }
+        
+        function openWebSocket(){
+            ipAddress = document.getElementById("ipAddressText").value;
+            port = document.getElementById("portText").value;
+            myWebSocketConnect.initializeWebSocketConnect(ipAddress, port);
+        }
+    </script>
+
 </body>
 </html>
