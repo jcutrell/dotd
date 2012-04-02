@@ -7,7 +7,9 @@ function KinectListener(skeletonBoxId){
 	
 	//lost tracking
 	var lostTrackingMaskDiv;
-	var lostTrackingAlertDiv
+	var lostTrackingAlertDiv;
+	var peekabooDiv;
+	var failureDiv;
 	
 	var skeletons = [];
 	var skeletonGroups = {};
@@ -35,6 +37,21 @@ function KinectListener(skeletonBoxId){
 		yMin: 100,
 		yMax: 350
 	};
+	
+	var peekabooObj = {
+		headRatioX: 0,
+		headRatioY: 0,
+		headRatioZ: 0,
+		leftHandDistance: 1000,
+		rightHandDistance: 1000,
+		maxDistance: 0.4, //kinect ratio distance
+		peekabooState: "not started",
+		holdTime: 500, //milliseconds
+		timer: null,
+		videoTimeStart: 40,
+		videoTimeEnd: 50
+	};
+	
 	
 	var leftHand;
 	var rightHand;
@@ -68,7 +85,9 @@ function KinectListener(skeletonBoxId){
 
 		lostTrackingMaskDiv = document.getElementById("lostTrackingMaskDiv");
 		lostTrackingAlertDiv = document.getElementById("lostTrackingAlertDiv");
-
+		peekabooDiv = document.getElementById("peekabooDiv");
+		failureDiv = document.getElementById("failureDiv");
+		
 		//generate the joint divs
 		for(var i=0; i<20; i++){
 			newNode = document.createElement("div");
@@ -90,10 +109,16 @@ function KinectListener(skeletonBoxId){
 		//output(mainVideo.currentTime);
 		videoTime = mainVideo.currentTime
 		if(videoTime > 14 && videoTime < 51 && !openedDoor){ //time to open door has expired
+			failureDiv.innerHTML = "Failed to open door!";
+			failureDiv.style.opacity = 1;
+			setTimeout(function(){failureDiv.style.opacity = 0;}, 2000);
 			mainVideo.currentTime = 51; //jump to ghost attack
 		}
 		
-		if(videoTime > 34 && videoTime < 51 && !tookHand){ //time to open door has expired
+		if(videoTime > 35 && videoTime < 51 && !tookHand){ //time to open door has expired
+			failureDiv.innerHTML = "Failed to take hand!";
+			failureDiv.style.opacity = 1;
+			setTimeout(function(){failureDiv.style.opacity = 0;}, 2000);
 			mainVideo.currentTime = 51; //jump to ghost attack
 		}
 	}
@@ -170,7 +195,7 @@ function KinectListener(skeletonBoxId){
 						node.style.webkitTransform = "translate3d(" + xPixel + "px, " + yPixel + "px, " + zPixel + "px)"; //move joint dots around to reflect kinect data
 
 
-						if(j==7){ //left hand circle					
+						if(j==7){ //left hand draw circle					
 							if		(leftRight_diff > leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("right", xRatio, yRatio, zRatio);}
 							else if	(leftRight_diff < -leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("left", xRatio, yRatio, zRatio);}
 							
@@ -181,7 +206,7 @@ function KinectListener(skeletonBoxId){
 							else if	(fowardbackwards_diff < -leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("backwards", xRatio, yRatio, zRatio);}
 						}
 						
-						if(j==11){ //right hand circle
+						if(j==11){ //right hand draw circle
 							if		(leftRight_diff > rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("right", xRatio, yRatio, zRatio);}
 							else if	(leftRight_diff < -rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("left", xRatio, yRatio, zRatio);}
 							
@@ -253,11 +278,16 @@ function KinectListener(skeletonBoxId){
 							rightHand.style.top = handY + "px";
 						}
 						
+						if(j==3){ //head bubble
+							var headX = xRatio*600 + 600;
+							var headY = yRatio*-600 + 300;
+						
+							head.style.left = headX + "px";
+							head.style.top = headY + "px";
+						}
 						
 						
-						
-						
-						
+
 						//Open Door
 						if(j==7){ //left hand - open door					
 							//var handXLeft = Math.floor(xRatio*250) + 250;
@@ -279,12 +309,14 @@ function KinectListener(skeletonBoxId){
 									if(handZLeft < zHitLeft - 30){
 										//output("THE DOOR IS OPEN!!!!!!!");
 										openedDoor = true;
-										mainVideo.currentTime = 16;
+										mainVideo.currentTime = 17;
 									}
 								}
 							}
 								
 						}
+						
+						
 						
 						if(j==11){ //right hand - open door
 							//var handXRight = Math.floor(xRatio*250) + 250;
@@ -306,7 +338,7 @@ function KinectListener(skeletonBoxId){
 									if(handZRight < zHitRight - 30){
 										//outputRight("THE DOOR IS OPEN!!!!!!!");
 										openedDoor = true;
-										mainVideo.currentTime = 16;
+										mainVideo.currentTime = 17;
 									}
 								}
 							}
@@ -350,7 +382,44 @@ function KinectListener(skeletonBoxId){
 							}
 							
 						}
-
+						
+						
+						
+						//PEEK-A-BOO
+						if(j==3){ //head - peek-a-boo
+							peekabooObj.headRatioX = xRatio;
+							peekabooObj.headRatioY = yRatio;
+							peekabooObj.headRatioZ = zRatio;
+						}
+						
+						if(j==7){ //left hand - peek-a-boo				
+							peekabooObj.leftHandDistance = Math.sqrt(Math.pow(xRatio - peekabooObj.headRatioX, 2) + Math.pow(yRatio - peekabooObj.headRatioY, 2) + Math.pow(zRatio - peekabooObj.headRatioZ, 2));
+						}
+						
+						if(j==11){ //right hand - take hand
+							peekabooObj.rightHandDistance = Math.sqrt(Math.pow(xRatio - peekabooObj.headRatioX, 2) + Math.pow(yRatio - peekabooObj.headRatioY, 2) + Math.pow(zRatio - peekabooObj.headRatioZ, 2));
+							
+							if(mainVideo.currentTime > 40 && mainVideo.currentTime < 50){
+								if(peekabooObj.leftHandDistance < peekabooObj.maxDistance && peekabooObj.rightHandDistance < peekabooObj.maxDistance){
+									
+									if(peekabooObj.peekabooState == "not started"){
+										peekabooObj.timer = setTimeout(function(){peekabooObj.peekabooState = "timer complete";}, peekabooObj.holdTime);
+										peekabooObj.peekabooState = "holding";
+									}
+								}
+								else{
+									if(peekabooObj.peekabooState == "timer complete"){
+										peekabooDiv.style.opacity = 1;
+										peekabooObj.peekabooState = "not started";
+										setTimeout(function(){peekabooDiv.style.opacity = 0;}, 2000);
+									}
+									else if(peekabooObj.peekabooState == "holding"){
+										clearTimeout(peekabooObj.timer);
+										peekabooObj.peekabooState = "not started";
+									}
+								}
+							}
+						}
 					}
 				}
 				
