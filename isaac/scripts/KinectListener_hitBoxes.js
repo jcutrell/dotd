@@ -259,6 +259,31 @@ function KinectListener(skeletonBoxId){
 						
 						*/
 						
+
+						/* TODO:
+						Implement this.
+						var x = 0, y= 0, prevx = 0, prevy = 0;
+						var pythagDist = 0;
+						var box = document.getElementById("hand);
+						$("#black").mousemove(function(e){
+						       x = e.pageX;
+						       y = e.pageY;
+						       pythagDist = Math.sqrt(Math.pow(prevx - x,2) + Math.pow(prevy - y,2));
+						    if (pythagDist > 20){
+						        box.style.opacity = (function(){ return 0.2 + (0.8 * (pythagDist / 40))})()
+						    }
+						    
+						    box.style.top = e.pageY;
+						        top : ,
+						        left : e.pageX
+						    }).stop().delay(700).animate({"opacity":"0.2"});
+						    prevx = x;
+						    prevy = y;
+						});
+
+						FROM:
+						http://jsfiddle.net/dBDAT/5/
+						​*/
 						//Hand Bubbles
 						if(j==7){ //left hand bubble
 							var handX = xRatio*600 + 600;
