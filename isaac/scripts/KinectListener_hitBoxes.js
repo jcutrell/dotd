@@ -10,6 +10,7 @@ function KinectListener(skeletonBoxId){
 	var lostTrackingAlertDiv;
 	var peekabooDiv;
 	var failureDiv;
+	var playButton;
 	
 	var skeletons = [];
 	var skeletonGroups = {};
@@ -24,7 +25,8 @@ function KinectListener(skeletonBoxId){
 
 	var mainVideo;
 	var videoTime = 0;
-
+	var videoPlaying = false;
+	
 	var openedDoor = false;
 	var tookHand = false;
 
@@ -87,6 +89,7 @@ function KinectListener(skeletonBoxId){
 		lostTrackingAlertDiv = document.getElementById("lostTrackingAlertDiv");
 		peekabooDiv = document.getElementById("peekabooDiv");
 		failureDiv = document.getElementById("failureDiv");
+		playButton = document.getElementById("playButton");
 		
 		//generate the joint divs
 		for(var i=0; i<20; i++){
@@ -101,7 +104,7 @@ function KinectListener(skeletonBoxId){
 		rightCircleListener =  new  CircleListener("Right Hand");
 		
 		mainVideo.addEventListener("timeupdate", updateVideoTime, false);
-		mainVideo.play();
+		//mainVideo.play();
 		//mainVideo.currentTime = 24; //jump to take hand (shortcut for testing)
 	}
 	
@@ -123,6 +126,18 @@ function KinectListener(skeletonBoxId){
 		}
 	}
 	
+	this.togglePlayback = function(){
+		if(videoPlaying){
+			mainVideo.pause();	
+			videoPlaying = false;
+			playButton.innerHTML = "Play";
+		}
+		else{
+			mainVideo.play();
+			videoPlaying = true;
+			playButton.innerHTML = "Pause";
+		}
+	}
 	
 	this.animate = function(data)
 	{
@@ -259,44 +274,17 @@ function KinectListener(skeletonBoxId){
 						
 						*/
 						
-
-						/* TODO:
-						Implement this.
-						var x = 0, y= 0, prevx = 0, prevy = 0;
-						var pythagDist = 0;
-						var box = document.getElementById("hand);
-						$("#black").mousemove(function(e){
-						       x = e.pageX;
-						       y = e.pageY;
-						       pythagDist = Math.sqrt(Math.pow(prevx - x,2) + Math.pow(prevy - y,2));
-						    if (pythagDist > 20){
-						        box.style.opacity = (function(){ return 0.2 + (0.8 * (pythagDist / 40))})()
-						    }
-						    
-						    box.style.top = e.pageY;
-						        top : ,
-						        left : e.pageX
-						    }).stop().delay(700).animate({"opacity":"0.2"});
-						    prevx = x;
-						    prevy = y;
-						});
-
-						FROM:
-						http://jsfiddle.net/dBDAT/5/
-						​*/
 						//Hand Bubbles
 						if(j==7){ //left hand bubble
-							var handX = xRatio*600 + 600;
+							var handX = xRatio*600 + 400;
 							var handY = yRatio*-600 + 300;
 						
 							leftHand.style.left = handX + "px";
 							leftHand.style.top = handY + "px";
-						
-							//output(handX + ", " + handY);
 						}
 						
 						if(j==11){ //right hand bubble
-							var handX = xRatio*600 + 600;
+							var handX = xRatio*600 + 400;
 							var handY = yRatio*-600 + 300;
 						
 							rightHand.style.left = handX + "px";
@@ -304,7 +292,7 @@ function KinectListener(skeletonBoxId){
 						}
 						
 						if(j==3){ //head bubble
-							var headX = xRatio*600 + 600;
+							var headX = xRatio*600 + 400;
 							var headY = yRatio*-600 + 300;
 						
 							head.style.left = headX + "px";

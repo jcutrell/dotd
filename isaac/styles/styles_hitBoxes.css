@@ -102,6 +102,7 @@ div.submit
 	width:200px;
 	height:100px;
 	background-color:#FFFFFF;
+	visibility:hidden;
 }
 
 #connect
@@ -381,4 +382,11 @@ div.bodyClass{
 	text-shadow:0px 0px 15px rgba(200,0,0,0.6);
 	opacity:0;
 	-webkit-transition:opacity 0.25s ease;
+}
+
+
+#playButton{
+	position:absolute;
+	left:10px;
+	top: 200px;
 }

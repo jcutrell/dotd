@@ -40,6 +40,8 @@ function WebSocketConnect(connectDivId, externalKinectListener){
 	
 	function socketOpenHandler()
 	{
+		output("Kinected!");
+		setTimeout(function(){output("");}, 1000);
 		connectDiv.style.visibility = "hidden";
 	}
 	
@@ -58,8 +60,9 @@ function WebSocketConnect(connectDivId, externalKinectListener){
 	
 	function socketCloseHandler()
 	{
-		alert("close");
-		connectDiv.style.visibility = "inherit";
+		output("Kinecting...");
+		setTimeout(function(){openWebSocket();}, 500);
+		//connectDiv.style.visibility = "inherit";
 	}
 }
 
