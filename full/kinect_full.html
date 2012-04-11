@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Kinect Head Tracking</title>
+
+<!--<link rel="stylesheet" type="text/css" href="styles/styles.css" />-->
+<link rel="stylesheet" type="text/css" href="styles/styles_full.css" />
+
+<!--<script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script>-->
+<script type="text/javascript" src="scripts/WebSocketConnection.js"></script>
+<script type="text/javascript" src="scripts/Point.js"></script>
+<script type="text/javascript" src="scripts/CircleListener.js"></script>
+<script type="text/javascript" src="scripts/KinectListener_full.js"></script>
+
+
+</head>
+
+<body onload="initializeInterface();">
+
+	<div id="sceneContainer">	
+    	<div id="backgroundDiv">
+        	<video id="mainVideo" src="clips/door_hand.mp4" width="1440" height="810"></video>
+        </div> 
+        <div id="scaryGirlDiv"></div>  
+        
+        <div id="circleDiv">
+            <div id="circleGlow"></div>
+        </div>
+        
+        <!--
+        <div id="lefthandblack"></div>
+		<div id="righthandblack"></div>
+		<div id="lefthandwhite"></div>
+		<div id="righthandwhite"></div>
+		-->
+        
+        <div id="leftHand"></div>
+        <div id="rightHand"></div>
+        <div id="head"></div>
+        <div id="fadeBlackDiv"></div>
+    </div>
+   
+    <div id="skeletonBox"></div>
+
+    
+    <div id="lostTrackingMaskDiv"></div>
+	<div id="lostTrackingAlertDiv">Please return to center</div>
+    
+    <div id="peekabooDiv">Peek-a-boo!</div>
+    <div id="failureDiv">Failed to...</div>
+    
+    <div id="connectionPanel">
+        IP: <input type="text" id="ipAddressText" value="127.0.0.1" /><br/>
+        Port: <input type="text" id="portText" value="1234" /><br/>
+        <button onclick="openWebSocket();">Submit</button>
+    </div>
+
+    
+    
+    
+    <div id="outputDiv" style="position:absolute; left:10px; top:100px; width:300px;">Kinecting...</div>
+	<button id="playButton" onclick="myKinectListener.togglePlayback();">Play</button>
+
+
+    <script>
+        
+        var myKinectListener;
+        var myWebSocketConnect;
+        var self = this;
+        var outputDiv;
+        
+        var backgroundDiv;
+        
+        function initializeInterface(){
+            outputDiv = document.getElementById("outputDiv");	
+            backgroundDiv = document.getElementById("backgroundDiv");	
+            
+            myKinectListener = new KinectListener("skeletonBox");
+            myWebSocketConnect = new WebSocketConnect("connectionPanel", myKinectListener);	
+            openWebSocket();
+        }
+    
+    
+        function output(txt){
+            outputDiv.innerHTML = txt;	
+        }
+        
+        function aoppendOutput(txt){
+            outputDiv.innerHTML += txt;	
+        }
+        
+        function openWebSocket(){
+            ipAddress = document.getElementById("ipAddressText").value;
+            port = document.getElementById("portText").value;
+            myWebSocketConnect.initializeWebSocketConnect(ipAddress, port);
+        }
+    </script>
+
+</body>
+</html>
