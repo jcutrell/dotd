@@ -1,0 +1,154 @@
+body{
+	background-color: #000000	
+}
+
+#sceneContainer{
+	position:absolute;
+	left:50%;
+	top:50%;
+	width:1000px;
+	height:600px; /*600px*/
+	margin-left:-500px;
+	margin-top:-300px;
+	
+	background-color:#000000;
+	overflow:hidden;
+}
+
+#backgroundDiv{
+	position:absolute;
+	left:-140px;
+	top:-60px;
+	width:1280px; /*1920*/
+	height:720px; /*1080*/
+}
+
+
+
+div.bodyDot{
+	position:absolute;
+	left: -50px;
+	top: -50px;	
+	width: 100px;
+	height: 100px;
+	background-image:url('../images/handDot.png');
+	opacity:0.8;
+	-webkit-transition:opacity 0.25s ease;
+}
+
+
+#circleDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:1000px;
+	height:600px;
+	
+	opacity:0;
+	-webkit-transition:opacity 1s ease;
+}
+
+#circleGlow{
+	position:absolute;
+	left:0px;
+	top:0px;
+	
+	width:1000px;
+	height:600px;
+	background-image:url('../images/glow.png');
+	
+	-webkit-animation-name: fadePulse;
+	-webkit-animation-duration:1s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-timing-function:ease;
+	-webkit-animation-direction:alternate;
+}
+
+@-webkit-keyframes fadePulse {
+	from {opacity:0.0.75;}
+	to {opacity:1.00;}
+	from {opacity:1.0;}
+	to {opacity:0.75;}
+}
+
+
+
+/*VIDEO PAN OBJECT*/
+#videoBoundingBox{
+	position:fixed;
+	left:50%;
+	top:50%;
+	width:400px; /*960*/
+	height:528px; /*528*/
+	margin-left:-200px; /* -0.5*width */
+	margin-top:-264px; /* -0.5*height */
+	border:solid #000000 1px;
+	background-color:#CCCCCC;
+	overflow:hidden;
+	
+	z-index:-1;
+}
+
+#videoContainer{
+	position:absolute;
+	left:-480px;
+	top:0px;
+	width:960px;
+	height:528px;
+}
+
+
+
+
+
+#lostTrackingMaskDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:100%;
+	background-image: -webkit-radial-gradient(rgba(0,0,0,0.0) 0%, rgba(0,0,0,1.0) 50%);
+	visibility:hidden;
+	opacity:0;
+	-webkit-transition:opacity 2s ease;
+}
+
+#lostTrackingAlertDiv{
+	position:absolute;
+	left:0px;
+	top:50%;
+	width:100%;
+	height:80px;
+	margin-top:-40px;
+	color:#AA0000;
+	font-size:64px;
+	font-family:sans-serif;
+	text-align:center;
+	visibility:hidden;
+	text-shadow:0px 0px 15px rgba(200,0,0,0.6);
+	opacity:0;
+	-webkit-transition:opacity 0.25s ease;
+}
+
+
+
+#fadeBlackDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:100%;
+	background-color:#000000;
+	opacity:1;
+	-webkit-transition:opacity 2s ease;
+}
+
+#redHitDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:100%;
+	background-image: -webkit-radial-gradient(rgba(255,0,0,0.5) 0%, rgba(150,0,0,0.75) 50%);
+	visibility:hidden;
+}

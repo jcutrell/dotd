@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Video Analyzer</title>
+</head>
+
+<body onload="init();">
+
+<video id="myVideo" src="clips/dotd.mp4" controls="controls" width="1280" height="720"></video>
+<div id="outputDiv">0.00000000</div>
+<input type="text" id="inputDiv" />
+
+<div id="redHitDiv"></div>
+
+<script>
+
+	var myVideo;
+	var outputDiv;
+	var inputDiv;
+	var submitButton;
+	
+	var playbackState = "paused";
+	
+	function init(){
+		myVideo = document.getElementById("myVideo");
+		outputDiv = document.getElementById("outputDiv");
+		inputDiv = document.getElementById("inputDiv");
+		
+		myVideo.addEventListener("timeupdate", updateVideoTime, false);
+		
+		document.addEventListener("keypress", function(event){if(event.keyCode == 13){setVideoTime(); inputDiv.blur();}}, false);
+		document.addEventListener("keypress", function(event){if(event.keyCode == 32){togglePlayback();}}, false);
+	}
+	
+	function updateVideoTime(){
+		outputDiv.innerHTML = myVideo.currentTime;
+	}
+	
+	function setVideoTime(){
+		myVideo.currentTime = inputDiv.value;
+	}
+	
+	function togglePlayback(){
+		if(playbackState == "paused"){
+			myVideo.play();
+			playbackState = "playing";	
+		}
+		else if(playbackState == "playing"){
+			myVideo.pause();
+			playbackState = "paused";	
+		}
+	}
+
+</script>
+
+<style>
+
+#myVideo{
+	position:absolute;
+	left:10px;
+	top:10px;
+	width 1280px;
+	height:720px;
+	z-index:-100;
+	
+}
+
+#outputDiv{
+	position:absolute;
+	left:20px;
+	top:20px;
+	width 400px;
+	color:#FFF;
+	font-size:18px;
+}
+
+#inputDiv{
+	position:absolute;
+	left:20px;
+	top:70px;
+	width 200px;
+	font-size:18px;
+}
+
+
+#redHitDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:100%;
+	background-image: -webkit-radial-gradient(rgba(255,0,0,0.5) 0%, rgba(255,0,0,0.0) 50%);
+	visibility:hidden;
+}
+
+</style>
+
+</body>
+</html>

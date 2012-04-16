@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Don't Open That Door</title>
+
+<link rel="stylesheet" type="text/css" href="styles/styles.css" />
+
+
+<script type="text/javascript" src="scripts/WebSocketConnection.js"></script>
+<script type="text/javascript" src="scripts/Point.js"></script>
+<script type="text/javascript" src="scripts/CircleListener.js"></script>
+<script type="text/javascript" src="scripts/KinectListener.js"></script>
+
+
+</head>
+
+<body onload="initializeInterface();">
+
+	<div id="sceneContainer">	
+    <div id="backgroundDiv">
+    	<video id="mainVideo" src="clips/dotd.mp4" width="1280" height="720"></video>
+    </div> 
+        
+  
+    <div id="circleDiv">
+        <div id="circleGlow"></div>
+    </div>
+        
+        
+    <div id="leftHandDiv" class="bodyDot"></div>
+    <div id="rightHandDiv" class="bodyDot"></div>
+    <div id="headDiv" class="bodyDot"></div>
+    
+    <div id="redHitDiv"></div>
+    	<div id="fadeBlackDiv"></div>
+    </div>
+       
+    <div id="lostTrackingMaskDiv"></div>
+	<div id="lostTrackingAlertDiv">Please return to center</div>
+    
+    <div id="peekabooDiv">Peek-a-boo!</div>
+    <div id="failureDiv">Failed to...</div> 
+    
+    <div id="outputDiv" style="position:absolute; left:10px; top:100px; width:300px;"></div>
+	
+	<script>
+        
+        var myKinectListener;
+        var myWebSocketConnect;
+        var self = this;
+        var outputDiv;
+        var backgroundDiv;
+        
+        function initializeInterface(){
+            outputDiv = document.getElementById("outputDiv");	
+            backgroundDiv = document.getElementById("backgroundDiv");	
+            
+            myKinectListener = new KinectListener();
+            myWebSocketConnect = new WebSocketConnect();	
+            openWebSocket();
+        }
+    
+    
+        function output(txt){
+            outputDiv.innerHTML = txt;	
+        }
+
+        function openWebSocket(){
+            ipAddress = "127.0.0.1";
+            port = "1234";
+            myWebSocketConnect.initializeWebSocketConnect(ipAddress, port);
+        }
+    </script>
+
+</body>
+</html>
