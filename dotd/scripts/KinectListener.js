@@ -3,8 +3,9 @@ function KinectListener(){
 
 	
 	var startPoint = 0;
-	var openedTitleDoor = true;
+	var openedTitleDoor = false;
 	
+	var sceneContainer;
 	var lostTrackingMaskDiv;
 	var lostTrackingAlertDiv;
 	var peekabooDiv;
@@ -14,7 +15,10 @@ function KinectListener(){
 	var rightHandDiv;
 	var headDiv;
 	var redHitDiv;
-	var circleDiv;
+	var thudSound;
+	var backgroundDiv;
+	var headTrackDiv;
+	//var circleDiv;
 	
 	var skeletons = [];
 	var skeletonGroups = {};
@@ -22,8 +26,8 @@ function KinectListener(){
 	
 	var userIsVisibleToKinect = false; //true when user is standing infront of the kinect, false otherwise
 	
-	var leftCircleListener;
-	var rightCircleListener;
+	//var leftCircleListener;
+	//var rightCircleListener;
 
 	var mainVideo;
 	var videoTime = 0;
@@ -38,8 +42,23 @@ function KinectListener(){
 	
 	var dodgeDistanceMin = 0.20;
 
+	var windowWidth = 0;
+	var windowHeight = 0;
+	var videoHeight = 0;
+	var videoWidth = 0;
+	var videoLeft = 0;
+	var sceneHeight = 0;
+	var sceneWidth = 0;
+	var sceneLeft = 0;
+	var videoLeftMin = 0;
+	var videoLeftMax = 0;
+	var videoLeftRange = 0;
+	var videoLeftShift = 0;
+
 	var experienceHasBegun = false;
 	var beginExperienceTimer = null;
+	var animationInterval = null;
+	var animationRatio = 1;
 
 	var takeHandHitbox = {
 		xMin: 450,
@@ -62,11 +81,35 @@ function KinectListener(){
 		videoTimeEnd: 50
 	};
 	
+	var leftHandColor = "white";
+	var rightHandColor = "white";
+	var headColor = "white";
+	
 	
 	var headPreDodgeX = 0;
 	var headPreDodgeY = 0;
 
-
+	
+	var introDoorHitBox = {
+		xRatioMin: -0.16,
+		xRatioMax: 0.27,
+		yRatioMin: -0.15,
+		yRatioMax: 0.55,
+		zWaistRatioOffsetMin: -1.00,
+		zWaistRatioOffsetMax: -0.40,
+		state: "out",
+	};
+	
+	var ghostDoorHitBox = {
+		xRatioMin: -0.50,
+		xRatioMax: 0.50,
+		yRatioMin: -0.15,
+		yRatioMax: 0.55,
+		zWaistRatioOffsetMin: -1.00,
+		zWaistRatioOffsetMax: -0.40,
+		state: "out",
+	};
+	
 	
 
 	function SkeletonObject(){ //skeleton joint storing object (used for keeping track of skeleton join positions from the previous kinect push)
@@ -87,9 +130,9 @@ function KinectListener(){
 	
 	
 	var interactionRanges = new Array(
-		{start:0, end:9}, 
+		{start:0, end:9.5}, 
 		{start:22.0, end:24.3},
-		{start:58.9, end:69},
+		{start:53.4, end:69},
 		{start:102, end:127},
 		{start:150, end:173},
 		{start:191.3, end:198.6}
@@ -99,11 +142,23 @@ function KinectListener(){
 	
 	
 	
+	function BodyDotObject(divElement){
+		this.divElement = divElement;
+		this.colorName = "white";
+	}
+	
+	
+	var leftHandBodyDot;
+	var rightHandBodyDot;
+	var headBodyDot;
+	
+	
+	
 	var firstPersonRanges = new Array(
 		{start:0, end:12}, 
 		{start:22.0, end:24.3},
 		{start:28, end:37},
-		{start:58.9, end:69},
+		{start:53.4, end:69},
 		{start:72, end:82},
 		{start:89.5, end:127},
 		{start:144.5, end:173},
@@ -123,13 +178,14 @@ function KinectListener(){
 	
 	var tp = { //time points
 		titleLoopStart: 0,
-		titleLoopEnd: 8.8,
+		titleLoopEnd: 8.2,
 		titleOpenDoor: 9.5,
-		drawSalt: 23.6,
+		titleOpenDoorEnd: 12,
+		//drawSalt: 23.6,
 		goodJob: 24.3,
 		badJob: 25.5,
 		findBones: 29.8,
-		openDoorStart: 58.9,
+		openDoorStart: 53.4,
 		openDoorEnd: 69, //ghost breaks in
 		takeHandStart_angry: 102,
 		takeHandEnd_angry: 109, //ghost begins throwing objects
@@ -147,22 +203,23 @@ function KinectListener(){
 		peekabooStart: 162,
 		peekabooEnd: 172, //failed peek-a-boo, ghost attacks
 		peekabooSwitch: 172.9,
-		knockedOver: 176, //fades to black
+		knockedOver: 175.2, //fades to black
 		knockedOverEnding: 186.7, //restart
 		peekabooRestart: 191.3,
 		peekabooRestartSwitch: 198.6,
 		peekabooSuccessStart: 201.65,
-		peekabooSuccessEnd: 202.25,
+		peekabooSuccessEnd: 203.5,
+		peekabooFullSuccess: 204,
 		peekabooEnding: 221.5, //restart
 	}
 	
 	
 	
 	
-	var drawnSalt = false;
-	var hasStartedDrawSalt = false;
-	var hasFinishedDrawSalt = false;
-	var openedDoorSuccess = false;
+	//var drawnSalt = false;
+	//var hasStartedDrawSalt = false;
+	//var hasFinishedDrawSalt = false;
+	var openedGhostDoor = false;
 	var tookHandSuccess = false;
 	var peekabooSuccessCount = 0;
 	var dodge1_success = false;
@@ -178,30 +235,9 @@ function KinectListener(){
 		}
 		
 		
-		if(videoTime > tp.drawSalt-0.1 && videoTime < tp.drawSalt+0.1 && !hasStartedDrawSalt){
-			hasStartedDrawSalt = true;
-			mainVideo.pause();
-			
-			setTimeout(function(){
-				if(!drawnSalt){
-					hasFinishedDrawSalt = true;
-					mainVideo.currentTime = tp.badJob;
-					mainVideo.play();
-				}
-			}, 7000);
-			
-			
+		if(videoTime > tp.titleOpenDoorEnd && videoTime < tp.titleOpenDoorEnd+1){
+			mainVideo.currentTime = tp.openDoorStart;
 		}
-		
-		/*
-		if(videoTime > tp.drawSalt && videoTime < tp.goodJob && !drawnSalt && hasFinishedDrawSalt){
-			mainVideo.currentTime = tp.badJob;
-		}*/
-		
-		if(videoTime > tp.badJob-0.5 && videoTime < tp.badJob && drawnSalt){
-			mainVideo.currentTime = tp.findBones;
-		}
-		
 		
 		if(videoTime > tp.takeHandEnd_happy && videoTime < tp.takeHandEnd_happy+1 && !tookHandSuccess){
 			mainVideo.currentTime = tp.dodgeScene;
@@ -249,29 +285,47 @@ function KinectListener(){
 		}
 		
 		
-		/*
-		inFirstPersonRange = false;
 		
-		for(index in firstPersonRanges){
-			if(videoTime > firstPersonRanges[index].start && videoTime < firstPersonRanges[index].end){
-				inFirstPersonRange = true;				
-				if(index != currentTransitionIndex){
-					inTransition = true;
-					transitionStart_x = -140;
-					transitionStart_y = -60;
-					transitionStep = 0;
-					currentTransitionIndex = index;
-				}
+		var foundToBeInRange = false;
+		
+		for(index in interactionRanges){
+			if(videoTime > interactionRanges[index].start && videoTime < interactionRanges[index].end){
+				foundToBeInRange = true;
 				break;
 			}
 		}
-		*/
+		
+		if(foundToBeInRange){
+			if(!inFirstPersonRange){
+				inFirstPersonRange = true;				
+				headTrackDiv.style.webkitTransform = "scale(1)";
+				sceneContainer.style.backgroundColor = "#000000";
+				animationRatio = 0;
+				clearInterval(animationInterval);
+				animationInterval = null;
+				animationInterval = setInterval(function(){animationRatio+=0.05; if(animationRatio >=1){clearInterval(animationInterval); animationRatio = 1;}}, 50);
+			}
+		}
+		else{
+			if(inFirstPersonRange){
+				inFirstPersonRange = false;	
+				headTrackDiv.style.webkitTransform = "scale(0.85)";
+				sceneContainer.style.backgroundColor = "#444444";
+				animationRatio = 1;
+				clearInterval(animationInterval);
+				animationInterval = null;
+				animationInterval = setInterval(function(){animationRatio-=0.05; if(animationRatio <=0.0){clearInterval(animationInterval); animationRatio=0.0}}, 50);
+			}
+		}
+		
 	}
 	
 	
 	
 	function initializeKinectListener()
 	{ 
+		sceneContainer = document.getElementById("sceneContainer");
+		
 		mainVideo = document.getElementById("mainVideo");
 		leftHandDiv = document.getElementById("leftHandDiv");
 		rightHandDiv = document.getElementById("rightHandDiv");
@@ -284,16 +338,57 @@ function KinectListener(){
 		playButton = document.getElementById("playButton");
 		fadeBlackDiv = document.getElementById("fadeBlackDiv");
 		redHitDiv = document.getElementById("redHitDiv");
-		circleDiv = document.getElementById("circleDiv");
+		thudSound = document.getElementById("thudSound");
+		backgroundDiv = document.getElementById("backgroundDiv");
+		headTrackDiv = document.getElementById("headTrackDiv");
 		
-		leftCircleListener =  new  CircleListener("Left Hand");
-		rightCircleListener =  new  CircleListener("Right Hand");
+		leftHandBodyDot = new BodyDotObject(leftHandDiv);
+		rightHandBodyDot = new BodyDotObject(rightHandDiv);
+		headBodyDot = new BodyDotObject(headDiv);
+		
+		resizeVideo();
+		
+		window.addEventListener("resize", function(){resizeVideo();}, false);
 		
 		mainVideo.addEventListener("timeupdate", updateVideoTime, false);
 		
 		setFadeBlack("in");
 		
 		mainVideo.currentTime = startPoint;
+	}
+	
+	
+	
+	function resizeVideo(){
+		windowWidth = window.innerWidth;
+		windowHeight = window.innerHeight;
+		
+		videoHeight = windowHeight;
+		videoWidth = Math.floor(videoHeight/0.5625);
+		
+		sceneHeight = videoHeight;
+		sceneWidth = Math.floor(videoWidth*0.80);
+		sceneLeft = Math.floor((windowWidth - sceneWidth)/2);
+		videoLeft = Math.floor((videoWidth - sceneWidth)/2)*-1;
+		
+		
+		videoLeftMin = videoLeft - Math.floor((videoWidth-sceneWidth)/2);
+		videoLeftMax = videoLeft + Math.floor((videoWidth-sceneWidth)/2);
+		videoLeftRange = videoLeftMax - videoLeftMin;
+		
+		sceneContainer.style.height = sceneHeight + "px";
+		sceneContainer.style.width = sceneWidth + "px";
+		sceneContainer.style.left = sceneLeft + "px";
+		
+		mainVideo.setAttribute("height", videoHeight);
+		mainVideo.setAttribute("width", videoWidth);
+		mainVideo.style.height = videoHeight + "px";
+		mainVideo.style.width = videoWidth + "px";
+		mainVideo.style.left = "0px";
+		
+		headTrackDiv.style.height = videoHeight + "px";
+		headTrackDiv.style.width = videoWidth + "px";
+		headTrackDiv.style.left = videoLeft + "px";
 	}
 	
 	
@@ -317,6 +412,10 @@ function KinectListener(){
 		headPreDodgeX = 0;
 		headPreDodgeY = 0;
 		
+		//leftCircleListener =  new  CircleListener("Left Hand");
+		//rightCircleListener =  new  CircleListener("Right Hand");
+		
+		
 		peekabooObj = {
 			headRatioX: 0,
 			headRatioY: 0,
@@ -331,11 +430,14 @@ function KinectListener(){
 			videoTimeEnd: 50
 		};
 		
+		introDoorHitBox.state = "out";
+		ghostDoorHitBox.state = "out";
+		
 		openedTitleDoor = false;
-		drawnSalt = false;
-		hasStartedDrawSalt = false;
-		hasFinishedDrawSalt = false;
-		openedDoorSuccess = false;
+		//drawnSalt = false;
+		//hasStartedDrawSalt = false;
+		//hasFinishedDrawSalt = false;
+		openedGhostDoor = false;
 		tookHandSuccess = false;
 		peekabooSuccessCount = 0;
 		dodge1_success = false;
@@ -352,6 +454,41 @@ function KinectListener(){
 		experienceHasBegun = true;
 		
 		mainVideo.play();
+	}
+	
+	
+	
+	
+	
+	function handleDoorOpening(bodyDotObj, doorHitBox, xRatio, yRatio, zWaistRatioOffset){
+		
+		//entered hitbox
+		if(doorHitBox.state == "out" && xRatio > doorHitBox.xRatioMin && xRatio < doorHitBox.xRatioMax && yRatio > doorHitBox.yRatioMin && yRatio < doorHitBox.yRatioMax && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
+			//if(bodyDotObj.colorName == "white"){
+				bodyDotObj.colorName = "magenta";
+				bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_magenta.png')";
+				doorHitBox.state = "in";
+				return false;
+			//}
+		}
+		
+		//completed hitbox
+		else if(doorHitBox.state == "in" && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
+			doorHitBox.state = "complete";
+			return true;
+		}
+		
+		/*
+		//left hitbox
+		else if(doorHitBox.state == "in" && (xRatio < doorHitBox.xRatioMin || xRatio > doorHitBox.xRatioMax || yRatio < doorHitBox.yRatioMin || yRatio > doorHitBox.yRatioMax && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax)){
+			//if(bodyDotObj.colorName == "magenta"){
+				bodyDotObj.colorName = "white";
+				bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_white.png')";
+				doorHitBox.state = "out";
+			//}
+		}
+		*/
+		return false;
 	}
 	
 	
@@ -432,73 +569,13 @@ function KinectListener(){
 						zRatioWaist = skeleton.joints[1].z;
 						var waistZ = Math.floor(zRatioWaist*-250) + 600;
 						
-						//node.style.webkitTransform = "translate3d(" + xPixel + "px, " + yPixel + "px, " + zPixel + "px)"; //move joint dots around to reflect kinect data
-
-						
-						
-						if(j==7){ //left hand draw circle					
-							if(hasStartedDrawSalt && !hasFinishedDrawSalt){
-								if		(leftRight_diff > leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("right", xRatio, yRatio, zRatio);}
-								else if	(leftRight_diff < -leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("left", xRatio, yRatio, zRatio);}
-								
-								if		(upDown_diff > leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("up", xRatio, yRatio, zRatio);}
-								else if	(upDown_diff < -leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("down", xRatio, yRatio, zRatio);}
-								
-								if		(fowardbackwards_diff > leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("forwards", xRatio, yRatio, zRatio);}
-								else if	(fowardbackwards_diff < -leftCircleListener.circleSpeed){leftCircleListener.beginTimeout("backwards", xRatio, yRatio, zRatio);}
-							}
-						}
-						
-						if(j==11){ //right hand draw circle
-							if(hasStartedDrawSalt && !hasFinishedDrawSalt){
-								if		(leftRight_diff > rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("right", xRatio, yRatio, zRatio);}
-								else if	(leftRight_diff < -rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("left", xRatio, yRatio, zRatio);}
-								
-								if		(upDown_diff > rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("up", xRatio, yRatio, zRatio);}
-								else if	(upDown_diff < -rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("down", xRatio, yRatio, zRatio);}
-								
-								if		(fowardbackwards_diff > rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("forwards", xRatio, yRatio, zRatio);}
-								else if	(fowardbackwards_diff < -rightCircleListener.circleSpeed){rightCircleListener.beginTimeout("backwards", xRatio, yRatio, zRatio);}
-							}
-						}
 						
 						
 						
 						if(j==3){ //head tracking for camera movement
-
-							/*
-							if(inFirstPersonRange){
-								
-								transitionRatio = 1;
-								if(transitionStep < transitionStepMax){
-									transitionRatio = transitionStep/transitionStepMax;
-									transitionStep++;
-								}
-								else{
-									inTransition = false;
-								}
-								
-								background_x = (constrain(xRatio*background_range_x*-1 + background_offset_x, -300, 300))*(transitionRatio) + -140*(1-transitionRatio);
-								background_y = (constrain((yRatio + headTracking_yRatio_offset)*background_range_y*-1 + background_offset_y, -200, 300))*(transitionRatio) + -60*(1-transitionRatio);
-								
-								backgroundDiv.style.left = background_x + "px";
-								backgroundDiv.style.top = background_y + "px";
-							}
-							else{
-								background_x = 0;
-								background_y = 0;
-								
-								backgroundDiv.style.left = background_x + "px";
-								backgroundDiv.style.top = background_y + "px";
-							}
-							*/
-							
-							background_x = constrain(xRatio*background_range_x*-1 + background_offset_x, -300, 300);
-							background_y = constrain((yRatio + headTracking_yRatio_offset)*background_range_y*-1 + background_offset_y, -200, 300);
-								
-							backgroundDiv.style.left = background_x + "px";
-							backgroundDiv.style.top = background_y + "px";
-							
+							bgx = ((xRatio*animationRatio+1)/2)*videoLeftRange + videoLeftMin;
+							videoLeftShift = Math.min(Math.max(bgx, videoLeftMin), videoLeftMax);
+							headTrackDiv.style.left = videoLeftShift + "px";
 						}
 
 
@@ -507,6 +584,7 @@ function KinectListener(){
 						
 						//Hand Bubbles
 						if(j==7){ //left hand bubble
+							//output(zRatio - zRatioWaist);
 							var handX = xRatio*600 + 400;
 							var handY = yRatio*-600 + 400;
 						
@@ -531,73 +609,49 @@ function KinectListener(){
 						}
 						
 						
+
+						
 						
 						
 
 						if(j==7){ //OPEN DOOR - left hand				
 							
-							//begin experience
+							//Intro Door - left hand
 							if(videoTime > tp.titleLoopStart && videoTime < tp.titleLoopEnd){
-								if(zRatio_extendedToOpenDoor_left == 0){
-									if(zRatio < zRatioWaist - zOpenDoorDistance){
-										zRatio_extendedToOpenDoor_left = zRatio;
-									}
-								}
-								else{
-									if(zRatio > zRatio_extendedToOpenDoor_left + zOpenDoorDistance){
-										openedTitleDoor = true;
-										zRatio_extendedToOpenDoor_left = 0;
-										mainVideo.currentTime = tp.titleOpenDoor; //door begins to open
-									}
+								if(handleDoorOpening(leftHandBodyDot, introDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+									openedTitleDoor = true;
+									mainVideo.currentTime = tp.titleOpenDoor;
+									setTimeout(function(){resetBodyDotColor();}, 1500);
 								}
 							}
 							
-							//let ghost in
+							//Ghost Door - left hand
 							if(videoTime > tp.openDoorStart && videoTime < tp.openDoorEnd){
-								if(zRatio_extendedToOpenDoor_left == 0){
-									if(zRatio < zRatioWaist - zOpenDoorDistance){
-										zRatio_extendedToOpenDoor_left = zRatio;
-									}
-								}
-								else{
-									if(zRatio > zRatio_extendedToOpenDoor_left + zOpenDoorDistance){
-										openedDoorSuccess = true;
-										mainVideo.currentTime = tp.doorOpening; //door begins to open
-									}
+								if(handleDoorOpening(leftHandBodyDot, ghostDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+									openedGhostDoor = true;
+									mainVideo.currentTime = tp.doorOpening;
+									setTimeout(function(){resetBodyDotColor();}, 1500);	
 								}
 							}
 								
 						}
 
 						if(j==11){ //OPEN DOOR - right hand
-							
+							//Intro Door - right hand
 							if(videoTime > tp.titleLoopStart && videoTime < tp.titleLoopEnd){
-								if(zRatio_extendedToOpenDoor_right == 0){
-									if(zRatio < zRatioWaist - zOpenDoorDistance){
-										zRatio_extendedToOpenDoor_right = zRatio;
-									}
-								}
-								else{
-									if(zRatio > zRatio_extendedToOpenDoor_right + zOpenDoorDistance){
-										openedTitleDoor = true;
-										zRatio_extendedToOpenDoor_right = 0;
-										mainVideo.currentTime = tp.titleOpenDoor; //door begins to open
-									}
+								if(handleDoorOpening(rightHandBodyDot, introDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+									openedTitleDoor = true;
+									mainVideo.currentTime = tp.titleOpenDoor;
+									setTimeout(function(){resetBodyDotColor();}, 1500);
 								}
 							}
 							
-							
+							//Ghost Door - right hand
 							if(videoTime > tp.openDoorStart && videoTime < tp.openDoorEnd){
-								if(zRatio_extendedToOpenDoor_right == 0){
-									if(zRatio < zRatioWaist - zOpenDoorDistance){
-										zRatio_extendedToOpenDoor_right = zRatio;
-									}
-								}
-								else{
-									if(zRatio > zRatio_extendedToOpenDoor_right + zOpenDoorDistance){
-										openedDoorSuccess = true;
-										mainVideo.currentTime = tp.doorOpening; //door begins to open
-									}
+								if(handleDoorOpening(rightHandBodyDot, ghostDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+									openedGhostDoor = true;
+									mainVideo.currentTime = tp.doorOpening;
+									setTimeout(function(){resetBodyDotColor();}, 1500);	
 								}
 							}
 						}
@@ -614,8 +668,9 @@ function KinectListener(){
 							if((videoTime > tp.takeHandStart_angry && videoTime < tp.takeHandEnd_angry) || (videoTime > tp.takeHandStart_happy && videoTime < tp.takeHandEnd_happy)){ //take hand happy and take hand angry ranges
 								if(handXLeft > takeHandHitbox.xMin && handXLeft < takeHandHitbox.xMax && handYLeft > takeHandHitbox.yMin && handYLeft < takeHandHitbox.yMax && zRatio < (zRatioWaist - zOpenDoorDistance) && !tookHandSuccess){
 									tookHandSuccess = true;
-									timeoutDuration = 2000;
-									setTimeout(function(){mainVideo.currentTime = tp.handTaken;}, 500);
+									setTimeout(function(){
+										mainVideo.currentTime = tp.handTaken;				
+									}, 1000);
 								}
 							}
 						}
@@ -628,7 +683,9 @@ function KinectListener(){
 							if((videoTime > tp.takeHandStart_angry && videoTime < tp.takeHandEnd_angry) || (videoTime > tp.takeHandStart_happy && videoTime < tp.takeHandEnd_happy)){ //take hand happy and take hand angry ranges
 								if(handXRight > takeHandHitbox.xMin && handXRight < takeHandHitbox.xMax && handYRight > takeHandHitbox.yMin && handYRight < takeHandHitbox.yMax && zRatio < (zRatioWaist - zOpenDoorDistance) && !tookHandSuccess){
 									tookHandSuccess = true;
-									setTimeout(function(){mainVideo.currentTime = tp.handTaken;}, 500);
+									setTimeout(function(){
+										mainVideo.currentTime = tp.handTaken;				
+									}, 1000);
 								}
 							}
 						}
@@ -659,8 +716,8 @@ function KinectListener(){
 									//no need to change video playback position, scene naturally flows into next interaction
 								}
 								else if(!dodge1_failure){ //failed to dodge
-									//mainVideo.currentTime = tp.knockedOver;
-									setTimeout(function(){redHitDiv.style.visibility = "inherit";}, 200);
+									thudSound.play();
+									setTimeout(function(){redHitDiv.style.visibility = "inherit";}, 0);
 									setTimeout(function(){redHitDiv.style.visibility = "hidden";}, 400);
 									dodge1_failure = true;
 								}
@@ -683,6 +740,9 @@ function KinectListener(){
 								}
 								
 								if(!dodge2_success){ //failed to dodge
+									thudSound.play();
+									setTimeout(function(){redHitDiv.style.visibility = "inherit";}, 0);
+									setTimeout(function(){redHitDiv.style.visibility = "hidden";}, 400);
 									mainVideo.currentTime = tp.knockedOver;
 								}
 							}
@@ -717,9 +777,7 @@ function KinectListener(){
 								}
 								else{
 									if(peekabooObj.peekabooState == "timer complete"){
-										//peekabooDiv.style.opacity = 1;
 										peekabooObj.peekabooState = "not started";
-										//setTimeout(function(){peekabooDiv.style.opacity = 0;}, 2000);
 										peekabooSuccessCount++;
 										
 										if(peekabooSuccessCount == 1){
@@ -727,7 +785,7 @@ function KinectListener(){
 											setTimeout(function(){mainVideo.currentTime = tp.peekabooRestart;}, 600);
 										}
 										else if(peekabooSuccessCount == 2){
-											mainVideo.currentTime = tp.peekabooSuccessStart;
+											mainVideo.currentTime = tp.peekabooFullSuccess;
 										}
 										
 									}
@@ -765,13 +823,6 @@ function KinectListener(){
 		
 		userIsVisibleToKinect = value;
 		
-		/*
-		if(showSkeletonBox){
-			if(userIsVisibleToKinect){skeletonBoxDiv.style.visibility = "inherit";}
-			else{skeletonBoxDiv.style.visibility = "hidden";}
-		}
-		*/
-		
 		if(userIsVisibleToKinect){
 			lostTrackingAlertDiv.style.opacity = "0";
 			lostTrackingMaskDiv.style.opacity = "0";
@@ -781,7 +832,6 @@ function KinectListener(){
 			}, 2000);
 			
 			if(!experienceHasBegun){
-				//output("I see you!");
 				beginExperienceTimer = setTimeout(function(){experienceHasBegun = true; mainVideo.play();}, 3000);
 			}
 		}
@@ -794,27 +844,25 @@ function KinectListener(){
 			}, 1000);
 			
 			if(!experienceHasBegun){
-				//output("Where are you?");
 				clearTimeout(beginExperienceTimer);
 			}
 		}
 	}
 	
-
 	
-	this.drawSaltCircle = function(){
-		drawnSalt = true;
+	function output(txt){
+		document.getElementById("outputDiv").innerHTML = txt;	
+	}
+	
+	
+	function resetBodyDotColor(){
+		leftHandDiv.style.backgroundImage = "url('images/bodyDot_white.png')"
+		rightHandDiv.style.backgroundImage = "url('images/bodyDot_white.png')"
+		headDiv.style.backgroundImage = "url('images/bodyDot_white.png')"
 		
-		circleDiv.style.opacity = 1;
-		
-		
-		hasFinishedDrawSalt = true;
-		mainVideo.currentTime = tp.goodJob;
-		mainVideo.play();		
-		
-		setTimeout(function(){
-			circleDiv.style.opacity = 0;
-		},5000);	
+		leftHandColor = "white";	
+		rightHandColor = "white";
+		headColor = "white";
 	}
 	
 	

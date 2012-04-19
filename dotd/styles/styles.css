@@ -1,30 +1,53 @@
-body{
-	background-color: #000000	
+
+#backgroundDiv{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:100%;
+	background-color:#000000;
 }
 
 #sceneContainer{
 	position:absolute;
-	left:50%;
-	top:50%;
-	width:1000px;
-	height:600px; /*600px*/
-	margin-left:-500px;
-	margin-top:-300px;
-	
-	background-color:#000000;
+	left:0px;
+	top:0px;
+	width:auto;
+	height:100%; /*600px*/
+
 	overflow:hidden;
+	
+	background-color: #000000;
+	-webkit-transition:background-color 1s ease;
 }
 
-#backgroundDiv{
+
+#headTrackDiv{
 	position:absolute;
-	left:-140px;
-	top:-60px;
-	width:1280px; /*1920*/
-	height:720px; /*1080*/
+	left:0px;
+	top0px;
+	max-height:100%;
+	width:auto;
+	
+	-webkit-transition:-webkit-transform 1s ease;
+}
+
+#mainVideo{
+	position:absolute;
+	left:0px;
+	top0px;
+	max-height:100%;
+	width:auto;
+	
 }
 
 
+#outputDiv{
+	color:#FFFFFF;
+	font-size:48px;
+}
 
+/*
 div.bodyDot{
 	position:absolute;
 	left: -50px;
@@ -35,6 +58,17 @@ div.bodyDot{
 	opacity:0.8;
 	-webkit-transition:opacity 0.25s ease;
 }
+*/
+
+div.bodyDot{
+	position:absolute;
+	width:100px;
+	height:100px;	
+	background-image:url('../images/bodyDot_white.png');
+	-webkit-transition:opacity 1s ease;
+}
+
+
 
 
 #circleDiv{

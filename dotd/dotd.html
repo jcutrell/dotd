@@ -17,22 +17,21 @@
 
 <body onload="initializeInterface();">
 
-	<div id="sceneContainer">	
-    <div id="backgroundDiv">
-    	<video id="mainVideo" src="clips/dotd.mp4" width="1280" height="720"></video>
-    </div> 
-        
-  
-    <div id="circleDiv">
-        <div id="circleGlow"></div>
-    </div>
-        
-        
-    <div id="leftHandDiv" class="bodyDot"></div>
-    <div id="rightHandDiv" class="bodyDot"></div>
-    <div id="headDiv" class="bodyDot"></div>
+	<div id="backgroundDiv"></div>
     
-    <div id="redHitDiv"></div>
+    <div id="sceneContainer">	
+
+        <div id="headTrackDiv">
+       		<video id="mainVideo" src="clips/dotd.mp4"></video>
+        
+        	<div id="leftHandDiv" class="bodyDot"></div>
+            <div id="rightHandDiv" class="bodyDot"></div>
+            <div id="headDiv" class="bodyDot"></div>
+        </div>
+            
+        
+        
+        <div id="redHitDiv"></div>
     	<div id="fadeBlackDiv"></div>
     </div>
        
@@ -42,8 +41,11 @@
     <div id="peekabooDiv">Peek-a-boo!</div>
     <div id="failureDiv">Failed to...</div> 
     
+    
     <div id="outputDiv" style="position:absolute; left:10px; top:100px; width:300px;"></div>
 	
+    <audio id="thudSound" src="clips/thud.mp3" style="display:none;"></audio>
+    
 	<script>
         
         var myKinectListener;
