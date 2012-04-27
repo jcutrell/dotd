@@ -2,8 +2,8 @@ function KinectListener(){
 	var jointIndexByName= {pelvis:0, waist:1, neck:2, head:3, left_shoulder:4, left_elbow:5, left_wrist:6, left_hand:7, right_shoulder:8, right_elbow:9, right_wrist:10, right_hand:11, left_hip:12, left_knee:13, left_ankle:14, left_foot:15, right_hip:16, right_knee:17, right_ankle:18, right_foot:19};
 
 	
-	var startPoint = 0;
-	var openedTitleDoor = false;
+	var startPoint = 160;
+	var openedTitleDoor = true;
 	
 	var sceneContainer;
 	var lostTrackingMaskDiv;
@@ -77,7 +77,7 @@ function KinectListener(){
 		headRatioZ: 0,
 		leftHandDistance: 1000,
 		rightHandDistance: 1000,
-		maxDistance: 0.4, //kinect ratio distance
+		maxDistance: 0.3, //kinect ratio distance
 		peekabooState: "not started",
 		holdTime: 500, //milliseconds
 		timer: null,
@@ -451,19 +451,9 @@ function KinectListener(){
 		//rightCircleListener =  new  CircleListener("Right Hand");
 		
 		
-		peekabooObj = {
-			headRatioX: 0,
-			headRatioY: 0,
-			headRatioZ: 0,
-			leftHandDistance: 1000,
-			rightHandDistance: 1000,
-			maxDistance: 0.4, //kinect ratio distance
-			peekabooState: "not started",
-			holdTime: 500, //milliseconds
-			timer: null,
-			videoTimeStart: 40,
-			videoTimeEnd: 50
-		};
+		peekabooObj.leftHandDistance = 1000;
+		peekabooObj.rightHandDistance = 1000;
+		peekabooState: "not started";
 		
 		introDoorHitBox_right.state = "out";
 		introDoorHitBox_left.state = "out";
@@ -833,7 +823,7 @@ function KinectListener(){
 							peekabooObj.leftHandDistance = Math.sqrt(Math.pow(xRatio - peekabooObj.headRatioX, 2) + Math.pow(yRatio - peekabooObj.headRatioY, 2) + Math.pow(zRatio - peekabooObj.headRatioZ, 2));
 						}
 						
-						if(j==11){ //right hand - take hand
+						if(j==11){ //right hand - peek-a-boo
 							peekabooObj.rightHandDistance = Math.sqrt(Math.pow(xRatio - peekabooObj.headRatioX, 2) + Math.pow(yRatio - peekabooObj.headRatioY, 2) + Math.pow(zRatio - peekabooObj.headRatioZ, 2));
 							
 							if((mainVideo.currentTime > tp.peekabooStart && mainVideo.currentTime < tp.peekabooEnd) || (mainVideo.currentTime > tp.peekabooRestart && mainVideo.currentTime < tp.peekabooRestartSwitch)){
@@ -844,7 +834,7 @@ function KinectListener(){
 										peekabooObj.peekabooState = "holding";
 									}
 								}
-								else{
+								else if(peekabooObj.leftHandDistance > peekabooObj.maxDistance && peekabooObj.rightHandDistance > peekabooObj.maxDistance){
 									if(peekabooObj.peekabooState == "timer complete"){
 										peekabooObj.peekabooState = "not started";
 										peekabooSuccessCount++;
