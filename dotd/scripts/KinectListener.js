@@ -18,6 +18,10 @@ function KinectListener(){
 	var thudSound;
 	var backgroundDiv;
 	var headTrackDiv;
+	var leftDotWhite;
+	var leftDotRed;
+	var rightDotWhite;
+	var rightDotRed;
 	//var circleDiv;
 	
 	var skeletons = [];
@@ -77,8 +81,6 @@ function KinectListener(){
 		peekabooState: "not started",
 		holdTime: 500, //milliseconds
 		timer: null,
-		videoTimeStart: 40,
-		videoTimeEnd: 50
 	};
 	
 	var leftHandColor = "white";
@@ -90,17 +92,40 @@ function KinectListener(){
 	var headPreDodgeY = 0;
 
 	
-	var introDoorHitBox = {
+	var introDoorHitBox_right = {
 		xRatioMin: -0.16,
 		xRatioMax: 0.27,
 		yRatioMin: -0.15,
 		yRatioMax: 0.55,
 		zWaistRatioOffsetMin: -1.00,
-		zWaistRatioOffsetMax: -0.40,
+		zWaistRatioOffsetMax: -0.50,
 		state: "out",
+		timer: null,
 	};
 	
-	var ghostDoorHitBox = {
+	var introDoorHitBox_left = {
+		xRatioMin: -0.16,
+		xRatioMax: 0.27,
+		yRatioMin: -0.15,
+		yRatioMax: 0.55,
+		zWaistRatioOffsetMin: -1.00,
+		zWaistRatioOffsetMax: -0.50,
+		state: "out",
+		timer: null,
+	};
+	
+	var ghostDoorHitBox_right = {
+		xRatioMin: -0.50,
+		xRatioMax: 0.50,
+		yRatioMin: -0.15,
+		yRatioMax: 0.55,
+		zWaistRatioOffsetMin: -1.00,
+		zWaistRatioOffsetMax: -0.50,
+		state: "out",
+		timer: null,
+	};
+	
+	var ghostDoorHitBox_left = {
 		xRatioMin: -0.50,
 		xRatioMax: 0.50,
 		yRatioMin: -0.15,
@@ -108,6 +133,7 @@ function KinectListener(){
 		zWaistRatioOffsetMin: -1.00,
 		zWaistRatioOffsetMax: -0.40,
 		state: "out",
+		timer: null,
 	};
 	
 	
@@ -145,6 +171,8 @@ function KinectListener(){
 	function BodyDotObject(divElement){
 		this.divElement = divElement;
 		this.colorName = "white";
+		//this.whiteDiv = whiteDiv;
+		//this.redDiv = redDiv;
 	}
 	
 	
@@ -299,7 +327,7 @@ function KinectListener(){
 			if(!inFirstPersonRange){
 				inFirstPersonRange = true;				
 				headTrackDiv.style.webkitTransform = "scale(1)";
-				sceneContainer.style.backgroundColor = "#000000";
+				//sceneContainer.style.backgroundColor = "#000000";
 				animationRatio = 0;
 				clearInterval(animationInterval);
 				animationInterval = null;
@@ -310,7 +338,7 @@ function KinectListener(){
 			if(inFirstPersonRange){
 				inFirstPersonRange = false;	
 				headTrackDiv.style.webkitTransform = "scale(0.85)";
-				sceneContainer.style.backgroundColor = "#444444";
+				//sceneContainer.style.backgroundColor = "#cccccc";
 				animationRatio = 1;
 				clearInterval(animationInterval);
 				animationInterval = null;
@@ -345,6 +373,13 @@ function KinectListener(){
 		leftHandBodyDot = new BodyDotObject(leftHandDiv);
 		rightHandBodyDot = new BodyDotObject(rightHandDiv);
 		headBodyDot = new BodyDotObject(headDiv);
+		
+		/*
+		leftDotWhite = new BodyDotObject(leftDotWhite);
+		leftDotRed = new BodyDotObject(leftDotRed);
+		rightDotWhite = new BodyDotObject(rightDotWhite);
+		rightDotRed = new BodyDotObject(rightDotRed);
+		*/
 		
 		resizeVideo();
 		
@@ -430,8 +465,11 @@ function KinectListener(){
 			videoTimeEnd: 50
 		};
 		
-		introDoorHitBox.state = "out";
-		ghostDoorHitBox.state = "out";
+		introDoorHitBox_right.state = "out";
+		introDoorHitBox_left.state = "out";
+		ghostDoorHitBox_right.state = "out";
+		ghostDoorHitBox_left.state = "out";
+		
 		
 		openedTitleDoor = false;
 		//drawnSalt = false;
@@ -463,31 +501,62 @@ function KinectListener(){
 	function handleDoorOpening(bodyDotObj, doorHitBox, xRatio, yRatio, zWaistRatioOffset){
 		
 		//entered hitbox
-		if(doorHitBox.state == "out" && xRatio > doorHitBox.xRatioMin && xRatio < doorHitBox.xRatioMax && yRatio > doorHitBox.yRatioMin && yRatio < doorHitBox.yRatioMax && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
-			//if(bodyDotObj.colorName == "white"){
-				bodyDotObj.colorName = "magenta";
-				bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_magenta.png')";
-				doorHitBox.state = "in";
-				return false;
-			//}
+		if(doorHitBox.state == "out" && xRatio > doorHitBox.xRatioMin && xRatio < doorHitBox.xRatioMax && yRatio > doorHitBox.yRatioMin && yRatio < doorHitBox.yRatioMax){
+			bodyDotObj.colorName = "red";
+			/*
+			bodyDotObj.redDiv.style.webkitTransitionDuration = "0.1s";
+			bodyDotObj.whiteDiv.style.webkitTransitionDuration = "0.1s";
+			bodyDotObj.redDiv.style.opacity = 1;
+			bodyDotObj.whiteDiv.style.opacity = 0;
+			*/
+			bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_magenta.png')";
+			doorHitBox.state = "in_2d";
+			
+			/*
+			bodyDotObj.redDiv.style.webkitTransitionDuration = "5s";
+			bodyDotObj.whiteDiv.style.webkitTransitionDuration = "5s";
+			bodyDotObj.redDiv.style.opacity = 0;
+			bodyDotObj.whiteDiv.style.opacity = 1;
+			*/
+			
+			return false;
+		}
+		else if(doorHitBox.state == "in_2d" && xRatio > doorHitBox.xRatioMin && xRatio < doorHitBox.xRatioMax && yRatio > doorHitBox.yRatioMin && yRatio < doorHitBox.yRatioMax && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
+			//bodyDotObj.colorName = "red";
+			/*
+			bodyDotObj.redDiv.style.webkitTransitionDuration = "0.1s";
+			bodyDotObj.whiteDiv.style.webkitTransitionDuration = "0.1s";
+			bodyDotObj.redDiv.style.opacity = 1;
+			bodyDotObj.whiteDiv.style.opacity = 0;
+			*/
+			//bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_magenta.png')";
+			doorHitBox.state = "in_3d";
+			
+			/*
+			bodyDotObj.redDiv.style.webkitTransitionDuration = "5s";
+			bodyDotObj.whiteDiv.style.webkitTransitionDuration = "5s";
+			bodyDotObj.redDiv.style.opacity = 0;
+			bodyDotObj.whiteDiv.style.opacity = 1;
+			*/
+			
+			return false;
 		}
 		
 		//completed hitbox
-		else if(doorHitBox.state == "in" && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
+		else if(doorHitBox.state == "in_3d" && zWaistRatioOffset > -0.15){//doorHitBox.zWaistRatioOffsetMax){
+			//clearTimeout(bodyDotObj.timer);
+			//bodyDotObj.timer = null;
 			doorHitBox.state = "complete";
 			return true;
 		}
 		
-		/*
-		//left hitbox
-		else if(doorHitBox.state == "in" && (xRatio < doorHitBox.xRatioMin || xRatio > doorHitBox.xRatioMax || yRatio < doorHitBox.yRatioMin || yRatio > doorHitBox.yRatioMax && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax)){
-			//if(bodyDotObj.colorName == "magenta"){
-				bodyDotObj.colorName = "white";
-				bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_white.png')";
-				doorHitBox.state = "out";
-			//}
+		
+		else if(doorHitBox.state == "in_2d" && (xRatio < doorHitBox.xRatioMin || xRatio > doorHitBox.xRatioMax || yRatio < doorHitBox.yRatioMin || yRatio > doorHitBox.yRatioMax)){
+			bodyDotObj.colorName = "white";
+			bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_white.png')";
+			doorHitBox.state = "out";
 		}
-		*/
+		
 		return false;
 	}
 	
@@ -584,6 +653,7 @@ function KinectListener(){
 						
 						//Hand Bubbles
 						if(j==7){ //left hand bubble
+							//output(xRatio);
 							//output(zRatio - zRatioWaist);
 							var handX = xRatio*600 + 400;
 							var handY = yRatio*-600 + 400;
@@ -618,7 +688,7 @@ function KinectListener(){
 							
 							//Intro Door - left hand
 							if(videoTime > tp.titleLoopStart && videoTime < tp.titleLoopEnd){
-								if(handleDoorOpening(leftHandBodyDot, introDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+								if(handleDoorOpening(leftHandBodyDot, introDoorHitBox_left, xRatio, yRatio, (zRatio-zRatioWaist))){
 									openedTitleDoor = true;
 									mainVideo.currentTime = tp.titleOpenDoor;
 									setTimeout(function(){resetBodyDotColor();}, 1500);
@@ -627,7 +697,7 @@ function KinectListener(){
 							
 							//Ghost Door - left hand
 							if(videoTime > tp.openDoorStart && videoTime < tp.openDoorEnd){
-								if(handleDoorOpening(leftHandBodyDot, ghostDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+								if(handleDoorOpening(leftHandBodyDot, ghostDoorHitBox_left, xRatio, yRatio, (zRatio-zRatioWaist))){
 									openedGhostDoor = true;
 									mainVideo.currentTime = tp.doorOpening;
 									setTimeout(function(){resetBodyDotColor();}, 1500);	
@@ -639,7 +709,7 @@ function KinectListener(){
 						if(j==11){ //OPEN DOOR - right hand
 							//Intro Door - right hand
 							if(videoTime > tp.titleLoopStart && videoTime < tp.titleLoopEnd){
-								if(handleDoorOpening(rightHandBodyDot, introDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+								if(handleDoorOpening(rightHandBodyDot, introDoorHitBox_right, xRatio, yRatio, (zRatio-zRatioWaist))){
 									openedTitleDoor = true;
 									mainVideo.currentTime = tp.titleOpenDoor;
 									setTimeout(function(){resetBodyDotColor();}, 1500);
@@ -648,7 +718,7 @@ function KinectListener(){
 							
 							//Ghost Door - right hand
 							if(videoTime > tp.openDoorStart && videoTime < tp.openDoorEnd){
-								if(handleDoorOpening(rightHandBodyDot, ghostDoorHitBox, xRatio, yRatio, (zRatio-zRatioWaist))){
+								if(handleDoorOpening(rightHandBodyDot, ghostDoorHitBox_right, xRatio, yRatio, (zRatio-zRatioWaist))){
 									openedGhostDoor = true;
 									mainVideo.currentTime = tp.doorOpening;
 									setTimeout(function(){resetBodyDotColor();}, 1500);	
@@ -750,8 +820,7 @@ function KinectListener(){
 						
 						
 						
-						
-						
+
 						
 						//PEEK-A-BOO
 						if(j==3){ //head - peek-a-boo

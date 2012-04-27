@@ -1,3 +1,6 @@
+body{
+	overflow:hidden;	
+}
 
 #backgroundDiv{
 	position:absolute;
@@ -5,7 +8,7 @@
 	top:0px;
 	width:100%;
 	height:100%;
-	background-color:#000000;
+	background-color:#CCCCCC;
 }
 
 #sceneContainer{
@@ -17,7 +20,7 @@
 
 	overflow:hidden;
 	
-	background-color: #000000;
+	background-color: #CCCCCC;
 	-webkit-transition:background-color 1s ease;
 }
 
@@ -35,10 +38,9 @@
 #mainVideo{
 	position:absolute;
 	left:0px;
-	top0px;
+	top:0px;
 	max-height:100%;
 	width:auto;
-	
 }
 
 
@@ -47,7 +49,7 @@
 	font-size:48px;
 }
 
-/*
+
 div.bodyDot{
 	position:absolute;
 	left: -50px;
@@ -55,18 +57,19 @@ div.bodyDot{
 	width: 100px;
 	height: 100px;
 	background-image:url('../images/handDot.png');
-	opacity:0.8;
+	opacity:1.0;
 	-webkit-transition:opacity 0.25s ease;
 }
-*/
 
+
+/*
 div.bodyDot{
 	position:absolute;
 	width:100px;
 	height:100px;	
 	background-image:url('../images/bodyDot_white.png');
 	-webkit-transition:opacity 1s ease;
-}
+}*/
 
 
 
@@ -185,4 +188,28 @@ div.bodyDot{
 	height:100%;
 	background-image: -webkit-radial-gradient(rgba(255,0,0,0.5) 0%, rgba(150,0,0,0.75) 50%);
 	visibility:hidden;
+}
+
+
+
+div.dotWhite{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100px;
+	height:100px;
+	background-image: -webkit-radial-gradient(rgba(255,255,255,0.8) 10%, rgba(255,255,255,0.4) 40%, rgba(255,0,0,0.0) 50%);
+	opacity:1;			
+	-webkit-transition:opacity 3s ease;
+}
+
+div.dotRed{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100px;
+	height:100px;
+	background-image: -webkit-radial-gradient(rgba(255,0,0,0.8) 10%, rgba(255,0,0,0.4) 40%, rgba(255,0,0,0.0) 50%);
+	opacity:0;			
+	-webkit-transition:opacity 3s ease;
 }
