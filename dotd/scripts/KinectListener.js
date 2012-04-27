@@ -2,8 +2,8 @@ function KinectListener(){
 	var jointIndexByName= {pelvis:0, waist:1, neck:2, head:3, left_shoulder:4, left_elbow:5, left_wrist:6, left_hand:7, right_shoulder:8, right_elbow:9, right_wrist:10, right_hand:11, left_hip:12, left_knee:13, left_ankle:14, left_foot:15, right_hip:16, right_knee:17, right_ankle:18, right_foot:19};
 
 	
-	var startPoint = 160;
-	var openedTitleDoor = true;
+	var startPoint = 0;
+	var openedTitleDoor = false;
 	
 	var sceneContainer;
 	var lostTrackingMaskDiv;
@@ -97,6 +97,12 @@ function KinectListener(){
 		xRatioMax: 0.27,
 		yRatioMin: -0.15,
 		yRatioMax: 0.55,
+		
+		leftRatio: 0.2930,
+		rightRatio: 0.5000,
+		topRatio: 0.8408,
+		bottomRatio: 0.0934,
+		
 		zWaistRatioOffsetMin: -1.00,
 		zWaistRatioOffsetMax: -0.50,
 		state: "out",
@@ -108,6 +114,12 @@ function KinectListener(){
 		xRatioMax: 0.27,
 		yRatioMin: -0.15,
 		yRatioMax: 0.55,
+		
+		leftRatio: 0.2930,
+		rightRatio: 0.5000,
+		topRatio: 0.8408,
+		bottomRatio: 0.0934,
+		
 		zWaistRatioOffsetMin: -1.00,
 		zWaistRatioOffsetMax: -0.50,
 		state: "out",
@@ -119,6 +131,13 @@ function KinectListener(){
 		xRatioMax: 0.50,
 		yRatioMin: -0.15,
 		yRatioMax: 0.55,
+		
+		leftRatio: 0.2930,
+		rightRatio: 0.5000,
+		topRatio: 0.8408,
+		bottomRatio: 0.0934,
+		
+		
 		zWaistRatioOffsetMin: -1.00,
 		zWaistRatioOffsetMax: -0.50,
 		state: "out",
@@ -130,6 +149,13 @@ function KinectListener(){
 		xRatioMax: 0.50,
 		yRatioMin: -0.15,
 		yRatioMax: 0.55,
+		
+		leftRatio: 0.2930,
+		rightRatio: 0.5000,
+		topRatio: 0.8408,
+		bottomRatio: 0.0934,
+		
+		
 		zWaistRatioOffsetMin: -1.00,
 		zWaistRatioOffsetMax: -0.40,
 		state: "out",
@@ -490,8 +516,18 @@ function KinectListener(){
 	
 	function handleDoorOpening(bodyDotObj, doorHitBox, xRatio, yRatio, zWaistRatioOffset){
 		
+		targetLeftPixel = videoWidth*doorHitBox.leftRatio;
+		targetRightPixel = videoWidth*doorHitBox.rightRatio;
+		targetTopPixel = videoHeight - (videoHeight*doorHitBox.topRatio);
+		targetBottomPixel = videoHeight - (videoHeight*doorHitBox.bottomRatio);
+		
+		bodyxPixel = ((xRatio+1)/2) * videoWidth;
+		bodyyPixel = videoHeight - (((yRatio+1)/2) * videoHeight);
+		
+		
+		
 		//entered hitbox
-		if(doorHitBox.state == "out" && xRatio > doorHitBox.xRatioMin && xRatio < doorHitBox.xRatioMax && yRatio > doorHitBox.yRatioMin && yRatio < doorHitBox.yRatioMax){
+		if(doorHitBox.state == "out" && bodyxPixel > targetLeftPixel && bodyxPixel < targetRightPixel && bodyyPixel > targetTopPixel && bodyyPixel < targetBottomPixel){
 			bodyDotObj.colorName = "red";
 			/*
 			bodyDotObj.redDiv.style.webkitTransitionDuration = "0.1s";
@@ -511,7 +547,7 @@ function KinectListener(){
 			
 			return false;
 		}
-		else if(doorHitBox.state == "in_2d" && xRatio > doorHitBox.xRatioMin && xRatio < doorHitBox.xRatioMax && yRatio > doorHitBox.yRatioMin && yRatio < doorHitBox.yRatioMax && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
+		else if(doorHitBox.state == "in_2d" && zWaistRatioOffset > doorHitBox.zWaistRatioOffsetMin && zWaistRatioOffset < doorHitBox.zWaistRatioOffsetMax){
 			//bodyDotObj.colorName = "red";
 			/*
 			bodyDotObj.redDiv.style.webkitTransitionDuration = "0.1s";
@@ -541,7 +577,7 @@ function KinectListener(){
 		}
 		
 		
-		else if(doorHitBox.state == "in_2d" && (xRatio < doorHitBox.xRatioMin || xRatio > doorHitBox.xRatioMax || yRatio < doorHitBox.yRatioMin || yRatio > doorHitBox.yRatioMax)){
+		else if((doorHitBox.state == "in_2d") && (bodyxPixel < targetLeftPixel || bodyxPixel > targetRightPixel || bodyyPixel < targetTopPixel || bodyyPixel > targetBottomPixel)){
 			bodyDotObj.colorName = "white";
 			bodyDotObj.divElement.style.backgroundImage = "url('images/bodyDot_white.png')";
 			doorHitBox.state = "out";
@@ -616,11 +652,7 @@ function KinectListener(){
 						yRatio_prev =  previousSkeleton.joint[j].y;
 						zRatio_prev =  previousSkeleton.joint[j].z;
 					
-						//x,y,z values in pixels
-						xPixel = xRatio*100 + 100;
-						yPixel = yRatio*-100 + 100;
-						zPixel = zRatio*100 + 100;
-						
+								
 						leftRight_diff 		= xRatio - xRatio_prev;
 						upDown_diff 		= yRatio - yRatio_prev;
 						fowardbackwards_diff = zRatio - zRatio_prev;
@@ -634,38 +666,49 @@ function KinectListener(){
 						if(j==3){ //head tracking for camera movement
 							bgx = ((xRatio*animationRatio+1)/2)*videoLeftRange + videoLeftMin;
 							videoLeftShift = Math.min(Math.max(bgx, videoLeftMin), videoLeftMax);
-							headTrackDiv.style.left = videoLeftShift + "px";
+							//headTrackDiv.style.left = videoLeftShift + "px";
 						}
 
 
 
+						
+						
+	/*					
+	var windowWidth = 0;
+	var windowHeight = 0;
+	var videoHeight = 0;
+	var videoWidth = 0;
+	var videoLeft = 0;
+	var sceneHeight = 0;
+	var sceneWidth = 0;
+	var sceneLeft = 0;
+	var videoLeftMin = 0;
+	var videoLeftMax = 0;
+	var videoLeftRange = 0;
+	var videoLeftShift = 0;
+	*/
 						
 						
 						//Hand Bubbles
-						if(j==7){ //left hand bubble
-							//output(xRatio);
-							//output(zRatio - zRatioWaist);
-							var handX = xRatio*600 + 400;
-							var handY = yRatio*-600 + 400;
+						var jointX = ((xRatio+1)/2) * videoWidth;
+						var jointY = videoHeight - (((yRatio+1)/2) * videoHeight);
 						
-							leftHandDiv.style.left = handX + "px";
-							leftHandDiv.style.top = handY + "px";
+						if(j==7){ //left hand bubble
+							output(xRatio + "<br/>" + yRatio + "<br/><br/>" + jointX + "<br/>" + jointY);
+							//output(zRatio - zRatioWaist);
+							
+							leftHandDiv.style.left = jointX + "px";
+							leftHandDiv.style.top = jointY + "px";
 						}
 						
 						if(j==11){ //right hand bubble
-							var handX = xRatio*600 + 400;
-							var handY = yRatio*-600 + 400;
-						
-							rightHandDiv.style.left = handX + "px";
-							rightHandDiv.style.top = handY + "px";
+							rightHandDiv.style.left = jointX + "px";
+							rightHandDiv.style.top = jointY + "px";
 						}
 						
 						if(j==3){ //head bubble
-							var headX = xRatio*600 + 400;
-							var headY = yRatio*-600 + 400;
-						
-							headDiv.style.left = headX + "px";
-							headDiv.style.top = headY + "px";
+							headDiv.style.left = jointX + "px";
+							headDiv.style.top = jointY + "px";
 						}
 						
 						
